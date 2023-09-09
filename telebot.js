@@ -283,33 +283,33 @@ const filterLink = (doneList, currentList) => {
   //     whiteList.length = 0;
   //   }
 
-  if (result.length < 10 && backupList.length > 0) {
-    let sortedBackupList = backupList.sort((a, b) => b.score - a.score);
-    for (let i = 0; sortedBackupList.length; i++) {
-      result.push(sortedBackupList[i]);
-    }
-    let finalResult = result.slice(0, 10);
-    if (whiteList.length > 0) {
-      whiteList.forEach((item) =>
-        finalResult.unshift({
-          id: uuidv4(),
-          link: item,
-          score: 999999,
-        })
-      );
-      whiteList.length = 0;
-      finalResult = finalResult.slice(0, 10);
-    }
-    finalResult.forEach((item) => doneList.push(item.id));
-    console.log(doneList);
-    finalResult.forEach((item) => {
-      let currentAccount = rankScore.find((item1) => item1.id == item.id);
-      if (currentAccount) {
-        currentAccount.score = currentAccount.score / 3;
-      }
-    });
-    return finalResult.map((item) => item.link);
-  }
+  // if (result.length < 10 && backupList.length > 0) {
+  //   let sortedBackupList = backupList.sort((a, b) => b.score - a.score);
+  //   for (let i = 0; sortedBackupList.length; i++) {
+  //     result.push(sortedBackupList[i]);
+  //   }
+  //   let finalResult = result.slice(0, 10);
+  //   if (whiteList.length > 0) {
+  //     whiteList.forEach((item) =>
+  //       finalResult.unshift({
+  //         id: uuidv4(),
+  //         link: item,
+  //         score: 999999,
+  //       })
+  //     );
+  //     whiteList.length = 0;
+  //     finalResult = finalResult.slice(0, 10);
+  //   }
+  //   finalResult.forEach((item) => doneList.push(item.id));
+  //   console.log(doneList);
+  //   finalResult.forEach((item) => {
+  //     let currentAccount = rankScore.find((item1) => item1.id == item.id);
+  //     if (currentAccount) {
+  //       currentAccount.score = currentAccount.score / 3;
+  //     }
+  //   });
+  //   return finalResult.map((item) => item.link);
+  // }
 
   let finalResult = result.sort((a, b) => b.score - a.score).slice(0, 10);
   if (whiteList.length > 0) {
@@ -331,6 +331,7 @@ const filterLink = (doneList, currentList) => {
       currentAccount.score = currentAccount.score / 3;
     }
   });
+  console.log("Final result: ", finalResult);
   return finalResult.map((item) => item.link);
 };
 
@@ -388,7 +389,7 @@ Thank you all`);
 // main();
 
 // Lên lịch cho các thời điểm cụ thể trong ngày
-cron.schedule("0 7,10,13,16,19,22 * * *", async () => {
+cron.schedule("35 7,10,13,16,19,22 * * *", async () => {
   console.log("Cron job started.");
   await myTask();
   console.log("Cron job finished.");
