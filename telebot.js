@@ -389,7 +389,7 @@ Thank you all`);
 // main();
 
 // Lên lịch cho các thời điểm cụ thể trong ngày
-cron.schedule("35 7,10,13,16,19,22 * * *", async () => {
+cron.schedule("0 7,10,13,16,19,22 * * *", async () => {
   console.log("Cron job started.");
   await myTask();
   console.log("Cron job finished.");
