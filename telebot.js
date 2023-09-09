@@ -214,7 +214,11 @@ bot.on("message", (msg) => {
   );
   let listIds = reportList.map((item) => item.reportUserId);
   console.log(listIds.indexOf(msg.from.id) === -1);
-  if (reportAccount.count >= 3 && reportAccount.count <= 5 && msg.from.id != 1906477815) {
+  if (
+    reportAccount.count >= 3 &&
+    reportAccount.count <= 5 &&
+    msg.from.id != 1906477815
+  ) {
     console.log("report account" + reportAccount);
     bot.sendMessage(
       chatId,
@@ -384,7 +388,7 @@ Thank you all`);
 // main();
 
 // Lên lịch cho các thời điểm cụ thể trong ngày
-cron.schedule("7 7,10,13,16,19,22 * * *", async () => {
+cron.schedule("5 7,10,14,16,19,22 * * *", async () => {
   console.log("Cron job started.");
   await myTask();
   console.log("Cron job finished.");
