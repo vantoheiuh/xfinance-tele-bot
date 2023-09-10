@@ -11,6 +11,7 @@ const reportList = require("./report.json");
 
 console.log(rankScore);
 
+
 // replace the value below with the Telegram token you receive from @BotFather
 const token = "6400705715:AAG2y9oUyfQeFVvUQIDx4yo0bvHKBEk_NIU";
 
@@ -54,7 +55,7 @@ bot.on("message", (msg) => {
       .indexOf(msg.text.split(" ")[0].split("/")[3]) === -1
   ) {
     console.log("go here");
-    if (containsLink(msg.text)) {
+    if (containsLink(msg.text) && msg.from.id != 777000) {
       // Nếu có liên kết, bạn có thể thực hiện một số hành động ở đây, ví dụ:
       // Gửi tin nhắn cảnh báo hoặc xóa tin nhắn.
       let currentAccount = rankScore.find((item) => item.id == msg.from.id);
@@ -81,9 +82,8 @@ bot.on("message", (msg) => {
       twitterName: msg.text.split(" ")[0].split("/")[3],
     });
   } else {
-    console.log("go hereeeeee: ", containsLink(msg.text));
     // console.log(msg)
-    if (containsLink(msg.text)) {
+    if (containsLink(msg.text) && msg.from.id != 777000) {
       // Nếu có liên kết, bạn có thể thực hiện một số hành động ở đây, ví dụ:
       // Gửi tin nhắn cảnh báo hoặc xóa tin nhắn.
       let currentAccount = rankScore.find((item) => item.id == msg.from.id);
@@ -102,7 +102,6 @@ bot.on("message", (msg) => {
             " không đủ điểm tối thiểu để gửi liên kết trong nhóm này, vui lòng tương tác các bài ghim trước khi gửi link."
         );
       } else {
-        console.log("aaaaa");
         currentAccount.score -= 3;
       }
     }
@@ -117,7 +116,7 @@ bot.on("message", (msg) => {
       console.log(
         "User " +
           msg.from.id +
-          "score updated. Current score: " +
+          " score updated. Current score: " +
           currentAccount.score
       );
     } else {
@@ -130,7 +129,7 @@ bot.on("message", (msg) => {
         console.log(
           "User " +
             msg.from.id +
-            "score updated. Current score: " +
+            " score updated. Current score: " +
             currentAccountUsername.score
         );
       } else {
@@ -346,10 +345,17 @@ async function myTask() {
   //-1001917262259 test channel
   bot.sendMessage(
     -1001957652310,
-    "Hello anh em. Anh em có bài post nào thì bỏ dưới cmt nhé, lưu ý là bài mới, bài cũ không có tác dụng. 15p sau mình sẽ post lên cho mọi người cùng chéo.\n" +
-      "Msg id: " +
-      currentId +
-      "\n"
+`Hello anh em. Anh em có bài post nào thì bỏ dưới cmt nhé, lưu ý là bài mới, bài cũ không có tác dụng. 15p sau mình sẽ post lên cho mọi người cùng tương tác.
+
+- Cơ chế ghim link:
+  1. Gom tất cả link của anh em lại thành 1 danh sách
+  2. Loại ra tất cả link của anh em đã lên trong ngày được danh sách mới
+  3. Từ danh sách mới lấy ra 10 link của anh em theo thứ tự rank cao -> thấp
+=> Anh em không nằm trong top vẫn hoàn toàn có thể được ghim nên đừng ngại post link nhé, vì sẽ có những lúc có ít link được gửi thì ae dễ được ghim hơn.
+
+Thank anh em <3.
+Msg id:  ${currentId} 
+`
   );
   console.log("Chờ user gửi link trong 15p!");
   await sleep(60000 * 15);
@@ -405,28 +411,36 @@ const writeReportFunc = () => {
 const ruleAlert = () => {
   let message = `
 >>> Rule nhóm - Rule lên bài ghim:
+
 + Khung giờ ghim link: 7h 10h 13h 16h 19h 22h.
 + Đúng 15 phút sau khi lấy link bot sẽ lên bài 10 link ghim cho ae tương tác, tương tác xong nhớ reply lại "done"
-
 + Cơ chế ghim link HOÀN TOÀN TỰ ĐỘNG, ưu tiên rank từ cao xuống thấp
-
 + Điểm = tương tác trong nhóm + reply done tương tác những link khác và done all tương tác link channel
-
 + Mỗi người mỗi ngày được lên ghim tối đa 1 lần. 60 post 1 ngày là 60 người. Rank top 60 sẽ được gim trong ngày. Ưu tiên từ cao xuống thấp
-
 + Gửi link trong nhóm chat sẽ trừ điểm. Cần phải tương tác lại link khác để có điểm
 
 - X FINANCE: https://x.com/xfinancevn
 - X FINANCE NEWS: https://x.com/xfinancevn_news
-
-Follow 2 tài khoản này và reply trong nhóm done2follow sẽ được nâng điểm và ưu tiên post bài
-
-Tele:
-- Channel : https://t.me/xfinancevietnam
-- Nhóm chat: https://t.me/xfinancevnn
+Ngoài ra, ae follow 2 tài khoản này và reply trong nhóm done2follow sẽ được nâng điểm và ưu tiên post bài
 `;
   bot.sendMessage(-1001851061739, message);
 };
+
+const adAlert = () => {
+  let message = `
+GÓC QUẢNG CÁO ( 30 phút )
+
+https://t.me/hiddengemsx
+  
+Nhóm cày Airdrop free nhận air đổi đời của nhà X FINANCE anh em vào sớm nhé❤️‍🩹
+  
+https://t.me/shitcoinxfinance
+  
+Nhóm shitcoin lowcap và meme của X FINANCE chuẩn bị sẵn cho siêu sóng sắp tới
+`;
+  bot.sendMessage(-1001851061739, message);
+};
+
 const reportAlert = () => {
   let message = `
 >>> Hướng dẫn report done mõm: 
@@ -435,9 +449,10 @@ const reportAlert = () => {
 Ví dụ: /report mõm
 Bot sẽ lưu lại và có hướng xử lí những ae bị report nhiều lần.
   `;
-  bot.sendMessage(-1001851061739, message);
+  bot.sendMessage(-1001957652310, message);
 };
 cron.schedule("*/1 * * * *", writeFileFunc);
+cron.schedule("30 6,9,12,15,18,21 * * *", adAlert);
 cron.schedule("*/10 7-23 * * *", writeReportFunc);
 cron.schedule("*/30 7-23 * * *", ruleAlert);
 cron.schedule("*/10 7-23 * * *", reportAlert);
