@@ -11,6 +11,9 @@ const reportList = require("./report.json");
 
 let snapshotList = require("./snapshot.json");
 
+let currentLinks = [];
+let nextLinks = [];
+
 console.log(rankScore);
 
 
@@ -35,22 +38,36 @@ let currentId = uuidv4();
 
 bot.on("message", (msg) => {
   const chatId = msg.chat.id;
-
+  const currentDate = new Date();
+  // Get the current hour (0-23)
+  const currentHour = currentDate.getHours();
   console.log(msg.from.id, msg.text);
-  //   console.log(msg);
+  // console.log(msg);
 
   let crAccount = rankScore.find((item) => item.id == msg.from.id);
   if (crAccount && !crAccount.firstName) {
     crAccount.firstName = msg.from.first_name
     crAccount.lastName = msg.from.last_name
   }
+  if (crAccount && !crAccount.doneList) {
+    crAccount.doneList = [];
+  }
+
   if (
     (msg.from.username == "xfinancevn" || msg.from.id == 1087968824 || msg.from.id == 5873879220) &&
     msg.text.indexOf("/add") !== -1
   ) {
     if (containsLink(whiteList.push(msg.text.split(" ")[1])) && whiteList.indexOf(msg.text.split(" ")[1]) !== -1)
-      whiteList.push(msg.text.split(" ")[1]);
+      whiteList.push(msg.text.split(" ")[1].split("?")[0]);
     console.log("Add white list thanh cong: ", whiteList);
+  }
+
+  if (
+    (msg.from.username == "xfinancevn" || msg.from.id == 1087968824 || msg.from.id == 5873879220) &&
+    msg.text.indexOf("/clear") !== -1
+  ) {
+    whiteList.length = 0;
+    console.log("Remove white list thanh cong: ", whiteList);
   }
   if (
     isWork &&
@@ -64,13 +81,16 @@ bot.on("message", (msg) => {
       .indexOf(msg.text.split(" ")[0].split("/")[3]) === -1
   ) {
     console.log("go here");
-    if (containsLink(msg.text) && msg.from.id != 777000) {
+    if (containsLink(msg.text) && msg.from.id != 777000 && msg.from.username !== "xfinancevn") {
       // Nếu có liên kết, bạn có thể thực hiện một số hành động ở đây, ví dụ:
       // Gửi tin nhắn cảnh báo hoặc xóa tin nhắn.
       let currentAccount = rankScore.find((item) => item.id == msg.from.id);
       let listIds = rankScore.map((item) => item.id);
       console.log(currentAccount);
       console.log(listIds.indexOf(msg.from.id) === -1);
+      if (currentAccount) {
+        currentAccount.twitter = msg.text.split(" ")[0].split("?")[0];
+      }
       if (
         !currentAccount ||
         listIds.indexOf(msg.from.id) === -1 ||
@@ -92,7 +112,7 @@ bot.on("message", (msg) => {
     });
   } else {
     // console.log(msg)
-    if (containsLink(msg.text) && msg.from.id != 777000) {
+    if (containsLink(msg.text) && msg.from.id != 777000 && msg.from.username !== "xfinancevn") {
       // Nếu có liên kết, bạn có thể thực hiện một số hành động ở đây, ví dụ:
       // Gửi tin nhắn cảnh báo hoặc xóa tin nhắn.
       let currentAccount = rankScore.find((item) => item.id == msg.from.id);
@@ -113,37 +133,75 @@ bot.on("message", (msg) => {
       } else {
         currentAccount.score -= 3;
       }
+
+      // if ((msg.text.indexOf("x.com") !== -1 || msg.text.indexOf("twitter.com/") !== -1) && msg.text.indexOf("/status/") !== -1 && extractUrls(msg.text).length > 0) {
+      //   let links = extractUrls(msg.text);
+      //   links.forEach(link => {
+      //     if (currentLinks.length < 5 && currentLinks.indexOf(link.split("?")[0]) === -1) {
+      //       currentLinks.push(link.split("?")[0]);
+      //     } else if (
+      //       currentLinks.length >= 5
+      //       && nextLinks.length < 5
+      //       && currentLinks.indexOf(link.split("?")[0]) === -1
+      //       && nextLinks.indexOf(link.split("?")[0]) === -1) {
+      //       currentLinks.push(link.split("?")[0]);
+      //     }
+
+      //     if (currentLinks.length > 5 && nextLinks.length >= 5) {
+      //       currentLinks.length = 0;
+      //       currentLinks = JSON.parse(JSON.stringify(nextLinks));
+      //       nextLinks.length = 0;
+      //     }
+      //   })
+      // }
     }
   }
   if (
     msg.text.toLowerCase().indexOf("done") !== -1 &&
-    msg.text.toLowerCase().indexOf("done all") === -1 &&
-    msg.text.toLowerCase().indexOf("done2follow") === -1 &&
-    msg.text.toLowerCase().indexOf("done2gr") === -1 &&
     containsLink(msg.reply_to_message.text)
   ) {
     let currentAccount = rankScore.find((item) => item.id == msg.from.id);
     if (currentAccount) {
-      currentAccount.score += 1;
-      console.log(
-        "User " +
-        msg.from.id +
-        " score updated. Current score: " +
-        currentAccount.score
-      );
+      if (
+        currentAccount.doneList.indexOf(msg.reply_to_message.message_id) === -1 &&
+        msg.text.toLowerCase().indexOf("done all") === -1 &&
+        msg.text.toLowerCase().indexOf("done2follow") === -1 &&
+        msg.text.toLowerCase().indexOf("done2gr") === -1) {
+        currentAccount.score += 1;
+        console.log(
+          "User " +
+          msg.from.id +
+          " score updated. Current score: " +
+          currentAccount.score
+        );
+        if (msg.reply_to_message.text.indexOf(`Nếu xong 1 link thì reply "done".`) === -1)
+          currentAccount.doneList.push(msg.reply_to_message.message_id);
+        if ((currentHour <= 7 || currentHour >= 19) && msg.reply_to_message.text.indexOf(`[BOOST]`) !== -1) {
+          currentAccount.score += 0.5;
+        }
+      }
+
+
     } else {
       let currentAccountUsername = rankScore.find(
         (item) => item.username == msg.from.username
       );
       if (currentAccountUsername) {
-        currentAccountUsername.score = currentAccountUsername.score += 1;
-        currentAccountUsername.id = msg.from.id;
-        console.log(
-          "User " +
-          msg.from.id +
-          " score updated. Current score: " +
-          currentAccountUsername.score
-        );
+        if (
+          msg.text.toLowerCase().indexOf("done all") === -1 &&
+          msg.text.toLowerCase().indexOf("done2follow") === -1 &&
+          msg.text.toLowerCase().indexOf("done2gr") === -1) {
+          currentAccountUsername.score = currentAccountUsername.score += 1;
+
+          currentAccountUsername.id = msg.from.id;
+          console.log(
+            "User " +
+            msg.from.id +
+            " score updated. Current score: " +
+            currentAccountUsername.score
+          );
+        }
+
       } else {
         rankScore.push({
           username: msg.from.username ?? uuidv4(),
@@ -160,7 +218,7 @@ bot.on("message", (msg) => {
     (msg.text.toLowerCase().indexOf("done2gr") !== -1 && containsLink(msg.reply_to_message.text))
   ) {
     let currentAccount = rankScore.find((item) => item.id == msg.from.id);
-    if (currentAccount && msg.text.toLowerCase().indexOf("done all") !== -1 && msg.reply_to_message.text.indexOf(`Nếu xong 1 link thì reply "done".`) !== -1) {
+    if (currentAccount && currentAccount.doneList.indexOf(msg.reply_to_message.message_id) === -1 && msg.text.toLowerCase().indexOf("done all") !== -1 && msg.reply_to_message.text.indexOf(`Nếu xong 1 link thì reply "done".`) !== -1) {
       currentAccount.score += 10;
       console.log(
         "User " +
@@ -168,6 +226,10 @@ bot.on("message", (msg) => {
         "score updated. Current score: " +
         currentAccount.score
       );
+      currentAccount.doneList.push(msg.reply_to_message.message_id);
+      if ((currentHour <= 7 || currentHour >= 19) && msg.reply_to_message.text.indexOf(`[BOOST]`) !== -1) {
+        currentAccount.score += 5;
+      }
     } else if (msg.text.toLowerCase().indexOf("done2follow") !== -1 && !currentAccount.isFollow) {
       currentAccount.score += 15;
       currentAccount.isFollow = true;
@@ -188,6 +250,40 @@ bot.on("message", (msg) => {
       );
     }
   }
+  // if (msg.text.toLowerCase() === "/link") {
+  //   if (currentLinks.length == 5) { }
+  //   //Please press this [link](https://www.sezane.com/fr/product/collection-printemps-all-0804/robe-will?cou_Id=859)
+
+  //   // const inlineKeyboard = {
+  //   //   inline_keyboard: [
+  //   //     [
+  //   //       { text: 'Google', url: 'https://www.google.com/' },
+  //   //       { text: 'OpenAI', url: 'https://www.openai.com/' },
+  //   //     ],
+  //   //     [
+  //   //       { text: 'Telegram', url: 'https://telegram.org/' },
+  //   //     ],
+  //   //   ],
+  //   // };
+
+  //   let linkMarkUp = currentLinks.map(item => {
+  //     return [{ text: "@" + item.split(".com/")[1].split("/status")[0], url: item }]
+  //   })
+
+  //   let finalLinkMarkup = {
+  //     inline_keyboard: linkMarkUp
+  //   }
+  //   console.log(finalLinkMarkup);
+
+  //   // Tin nhắn với inline keyboard
+  //   const messageOptions = {
+  //     reply_markup: finalLinkMarkup,
+  //   };
+
+  //   bot.sendMessage(-1001851061739, `Msg id: 
+  //   Dưới đây là ${currentLinks
+  //     .length} link gần nhất được gửi trong nhóm chat để tương tác, sau khi tương tác xong hãy reply lại message này với từ khóa: done5 để bot cộng điểm.`, messageOptions);
+  // }
   if (msg.text.toLowerCase() === "/rank") {
     let sortedRankScore = rankScore.sort((a, b) => b.score - a.score);
     let currentAccountIndex = sortedRankScore.findIndex(
@@ -307,7 +403,7 @@ bot.on("message", (msg) => {
 
 function containsLink(text) {
   // Bạn có thể tùy chỉnh biểu thức chính quy (regex) để kiểm tra liên kết
-  const linkRegex = /(http|https|www\.)/;
+  const linkRegex = /(http|t.me|https|www\.)/;
   return linkRegex.test(text);
 }
 
@@ -429,11 +525,16 @@ Msg id:  ${currentId}
   );
   console.log("Chờ user gửi link trong 15p!");
   await sleep(60000 * 15);
+  const currentDate = new Date();
 
+  // Get the current hour (0-23)
+  const currentHour = currentDate.getHours();
+
+  console.log("Current hour:", currentHour);
   const ghimLink = filterLink(doneTaskList, currentTaskList)
     .map((item, index) => index + 1 + ". " + item)
     .join("\n")
-    .concat(` \n\nHi ae, đây là 10 post của lượt này, ae tương tác ủng hộ các bạn, xong hết nhớ reply "done all" ( rất quan trọng), có thể kèm link xuống cho ae trả nhé.
+    .concat(` \n\n${currentHour >= 19 || currentHour < 7 ? "[BOOST] " : ""}Hi ae, đây là 10 post của lượt này, ae tương tác ủng hộ các bạn, xong hết nhớ reply "done all" ( rất quan trọng), có thể kèm link xuống cho ae trả nhé.
 Nếu xong 1 link thì reply "done".
 \n>>>>> Các kênh chính thức của #XFINANCE:
 - X FINANCE: https://x.com/xfinancevn
@@ -445,12 +546,7 @@ Thank you all`);
 
   isWork = false;
   currentTaskList.length = 0;
-  const currentDate = new Date();
 
-  // Get the current hour (0-23)
-  const currentHour = currentDate.getHours();
-
-  console.log("Current hour:", currentHour);
   if (currentHour >= 22) {
     doneTaskList.length = 0;
   }
@@ -464,6 +560,16 @@ Thank you all`);
 
 // main();
 
+function extractUrls(text) {
+  // Biểu thức chính quy để tìm kiếm các URL
+  const urlRegex = /https?:\/\/[^\s/$.?#].[^\s]*|www\.[^\s/$.?#].[^\s]*/g;
+
+  // Sử dụng biểu thức chính quy để tìm và trích xuất các URL từ đoạn văn bản
+  const urls = text.match(urlRegex);
+
+  return urls || [];
+}
+
 // Lên lịch cho các thời điểm cụ thể trong ngày
 
 const writeFileFunc = () => {
@@ -476,7 +582,7 @@ const writeSnapshotFunc = () => {
 };
 
 const writeSnapshotClearFunc = () => {
-  snapshotList.length = 0 
+  snapshotList.length = 0
   fs.writeFileSync("./snapshot.json", JSON.stringify([]));
 };
 
@@ -499,7 +605,7 @@ const ruleAlert = () => {
 - X FINANCE NEWS: https://x.com/xfinancevn_news
 Ngoài ra, ae follow 2 tài khoản này và reply trong nhóm done2follow sẽ được nâng điểm và ưu tiên post bài
 `;
-  bot.sendMessage(-1001851061739, message);
+  bot.sendMessage(-1001851061739, message, { disable_web_page_preview: true });
 };
 
 const adAlert = () => {
@@ -535,7 +641,8 @@ cron.schedule("0 23 * * *", writeSnapshotClearFunc);
 cron.schedule("30 6,9,12,15,18,21 * * *", adAlert);
 cron.schedule("*/10 7-23 * * *", writeReportFunc);
 cron.schedule("*/30 7-23 * * *", ruleAlert);
-cron.schedule("*/10 7-23 * * *", reportAlert);
+cron.schedule("15 7-23 * * *", reportAlert);
+cron.schedule("45 7-23 * * *", reportAlert);
 cron.schedule("0 7,10,13,16,19,22 * * *", async () => {
   console.log("Cron job started.");
   await myTask();
