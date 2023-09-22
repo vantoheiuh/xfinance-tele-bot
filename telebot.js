@@ -18,7 +18,7 @@ console.log(rankScore);
 
 
 // replace the value below with the Telegram token you receive from @BotFather
-const token = "6400705715:AAG2y9oUyfQeFVvUQIDx4yo0bvHKBEk_NIU";
+const token = "6400705715:AAEIuGZkxkqhUcxTD4G45c2GPOOpPmwIKcM";
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
@@ -30,6 +30,7 @@ let currentTaskList = [];
 let doneTaskList = [];
 let isWork = false;
 let whiteList = [];
+let isReverse = false;
 
 let done = require("./done.json");
 done.forEach((item) => doneTaskList.push(item));
@@ -134,26 +135,26 @@ bot.on("message", (msg) => {
         currentAccount.score -= 3;
       }
 
-      // if ((msg.text.indexOf("x.com") !== -1 || msg.text.indexOf("twitter.com/") !== -1) && msg.text.indexOf("/status/") !== -1 && extractUrls(msg.text).length > 0) {
-      //   let links = extractUrls(msg.text);
-      //   links.forEach(link => {
-      //     if (currentLinks.length < 5 && currentLinks.indexOf(link.split("?")[0]) === -1) {
-      //       currentLinks.push(link.split("?")[0]);
-      //     } else if (
-      //       currentLinks.length >= 5
-      //       && nextLinks.length < 5
-      //       && currentLinks.indexOf(link.split("?")[0]) === -1
-      //       && nextLinks.indexOf(link.split("?")[0]) === -1) {
-      //       currentLinks.push(link.split("?")[0]);
-      //     }
+      if ((msg.text.indexOf("x.com") !== -1 || msg.text.indexOf("twitter.com/") !== -1) && msg.text.indexOf("/status/") !== -1 && extractUrls(msg.text).length > 0) {
+        let links = extractUrls(msg.text);
+        links.forEach(link => {
+          if (currentLinks.length < 5 && currentLinks.indexOf(link.split("?")[0]) === -1) {
+            currentLinks.push(link.split("?")[0]);
+          } else if (
+            currentLinks.length >= 5
+            && nextLinks.length < 5
+            && currentLinks.indexOf(link.split("?")[0]) === -1
+            && nextLinks.indexOf(link.split("?")[0]) === -1) {
+            nextLinks.push(link.split("?")[0]);
+          }
 
-      //     if (currentLinks.length > 5 && nextLinks.length >= 5) {
-      //       currentLinks.length = 0;
-      //       currentLinks = JSON.parse(JSON.stringify(nextLinks));
-      //       nextLinks.length = 0;
-      //     }
-      //   })
-      // }
+          if (currentLinks.length > 5 && nextLinks.length >= 5) {
+            currentLinks.length = 0;
+            currentLinks = JSON.parse(JSON.stringify(nextLinks));
+            nextLinks.length = 0;
+          }
+        })
+      }
     }
   }
   if (
@@ -250,40 +251,39 @@ bot.on("message", (msg) => {
       );
     }
   }
-  // if (msg.text.toLowerCase() === "/link") {
-  //   if (currentLinks.length == 5) { }
-  //   //Please press this [link](https://www.sezane.com/fr/product/collection-printemps-all-0804/robe-will?cou_Id=859)
+  if (msg.text.toLowerCase() === "/link") {
+    if (currentLinks.length == 5) { }
+    //Please press this [link](https://www.sezane.com/fr/product/collection-printemps-all-0804/robe-will?cou_Id=859)
 
-  //   // const inlineKeyboard = {
-  //   //   inline_keyboard: [
-  //   //     [
-  //   //       { text: 'Google', url: 'https://www.google.com/' },
-  //   //       { text: 'OpenAI', url: 'https://www.openai.com/' },
-  //   //     ],
-  //   //     [
-  //   //       { text: 'Telegram', url: 'https://telegram.org/' },
-  //   //     ],
-  //   //   ],
-  //   // };
+    // const inlineKeyboard = {
+    //   inline_keyboard: [
+    //     [
+    //       { text: 'Google', url: 'https://www.google.com/' },
+    //       { text: 'OpenAI', url: 'https://www.openai.com/' },
+    //     ],
+    //     [
+    //       { text: 'Telegram', url: 'https://telegram.org/' },
+    //     ],
+    //   ],
+    // };
 
-  //   let linkMarkUp = currentLinks.map(item => {
-  //     return [{ text: "@" + item.split(".com/")[1].split("/status")[0], url: item }]
-  //   })
+    let linkMarkUp = currentLinks.map(item => {
+      return [{ text: "@" + item.split(".com/")[1].split("/status")[0], url: item }]
+    })
 
-  //   let finalLinkMarkup = {
-  //     inline_keyboard: linkMarkUp
-  //   }
-  //   console.log(finalLinkMarkup);
+    let finalLinkMarkup = {
+      inline_keyboard: linkMarkUp
+    }
+    console.log(finalLinkMarkup);
 
-  //   // Tin nhắn với inline keyboard
-  //   const messageOptions = {
-  //     reply_markup: finalLinkMarkup,
-  //   };
+    // Tin nhắn với inline keyboard
+    const messageOptions = {
+      reply_markup: finalLinkMarkup,
+    };
 
-  //   bot.sendMessage(-1001851061739, `Msg id: 
-  //   Dưới đây là ${currentLinks
-  //     .length} link gần nhất được gửi trong nhóm chat để tương tác, sau khi tương tác xong hãy reply lại message này với từ khóa: done5 để bot cộng điểm.`, messageOptions);
-  // }
+    bot.sendMessage(-1001851061739, `ĐANG TEST, VUI LÒNG KHÔNG TƯƠNG TÁC 
+Dưới đây là ${currentLinks.length} link gần nhất được gửi trong nhóm chat để tương tác, sau khi tương tác xong hãy reply lại message này với từ khóa: done5 để bot cộng điểm.`, messageOptions);
+  }
   if (msg.text.toLowerCase() === "/rank") {
     let sortedRankScore = rankScore.sort((a, b) => b.score - a.score);
     let currentAccountIndex = sortedRankScore.findIndex(
@@ -433,46 +433,6 @@ const filterLink = (doneList, currentList) => {
   });
   console.log("result: " + result);
 
-  //   if (whiteList.length > 0) {
-  //     let finalResult = result.sort((a, b) => b.score - a.score).slice(0, 10);
-  //     whiteList.forEach((item) =>
-  //       finalResult.unshift({
-  //         id: uuidv4(),
-  //         link: item,
-  //         score: 999999,
-  //       })
-  //     );
-  //     whiteList.length = 0;
-  //   }
-
-  // if (result.length < 10 && backupList.length > 0) {
-  //   let sortedBackupList = backupList.sort((a, b) => b.score - a.score);
-  //   for (let i = 0; sortedBackupList.length; i++) {
-  //     result.push(sortedBackupList[i]);
-  //   }
-  //   let finalResult = result.slice(0, 10);
-  //   if (whiteList.length > 0) {
-  //     whiteList.forEach((item) =>
-  //       finalResult.unshift({
-  //         id: uuidv4(),
-  //         link: item,
-  //         score: 999999,
-  //       })
-  //     );
-  //     whiteList.length = 0;
-  //     finalResult = finalResult.slice(0, 10);
-  //   }
-  //   finalResult.forEach((item) => doneList.push(item.id));
-  //   console.log(doneList);
-  //   finalResult.forEach((item) => {
-  //     let currentAccount = rankScore.find((item1) => item1.id == item.id);
-  //     if (currentAccount) {
-  //       currentAccount.score = currentAccount.score / 3;
-  //     }
-  //   });
-  //   return finalResult.map((item) => item.link);
-  // }
-
   let finalResult = result.sort((a, b) => b.score - a.score).slice(0, 10);
   if (whiteList.length > 0) {
     whiteList.forEach((item) => {
@@ -487,6 +447,9 @@ const filterLink = (doneList, currentList) => {
     );
     whiteList.length = 0;
     finalResult = finalResult.slice(0, 10);
+    isReverse = true;
+  }else{
+    isReverse = false;
   }
   finalResult.forEach((item) => doneList.push(item.id));
   console.log(doneList);
@@ -532,6 +495,7 @@ Msg id:  ${currentId}
 
   console.log("Current hour:", currentHour);
   const ghimLink = filterLink(doneTaskList, currentTaskList)
+    .reverse()
     .map((item, index) => index + 1 + ". " + item)
     .join("\n")
     .concat(` \n\n${currentHour >= 19 || currentHour < 7 ? "[BOOST] " : ""}Hi ae, đây là 10 post của lượt này, ae tương tác ủng hộ các bạn, xong hết nhớ reply "done all" ( rất quan trọng), có thể kèm link xuống cho ae trả nhé.
