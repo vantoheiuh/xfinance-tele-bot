@@ -32,6 +32,8 @@ let isWork = false;
 let whiteList = [];
 let isReverse = false;
 let clonedLinks = [];
+let backupLinks = require("./backupLinks.json");
+let firstRun = true;
 let ids = require("./ids.json");
 let idLink;
 
@@ -63,7 +65,7 @@ bot.on("message", (msg) => {
 
   if (
     (msg.from.username == "xfinancevn" || msg.from.id == 1087968824 || msg.from.id == 5873879220) &&
-    msg.text.indexOf("/add") !== -1
+    msg.text.indexOf("/add") !== -1 && msg.text.indexOf("/addtop") === -1
   ) {
     if (containsLink(whiteList.push(msg.text.split(" ")[1])) && whiteList.indexOf(msg.text.split(" ")[1]) !== -1)
       whiteList.push(msg.text.split(" ")[1].split("?")[0]);
@@ -130,7 +132,7 @@ bot.on("message", (msg) => {
       if (
         !currentAccount ||
         listIds.indexOf(msg.from.id) === -1 ||
-        currentAccount.score < 5 || 
+        currentAccount.score < 5 ||
         msg.forward_from
       ) {
         bot.deleteMessage(chatId, msg.message_id); // Xóa tin nhắn chứa liên kết
@@ -146,7 +148,7 @@ bot.on("message", (msg) => {
       if ((msg.text.indexOf("x.com") !== -1 || msg.text.indexOf("twitter.com/") !== -1) && msg.text.indexOf("/status/") !== -1 && extractUrls(msg.text).length > 0) {
         let links = extractUrls(msg.text);
         links.forEach(link => {
-          if (currentLinks.length < 5 && currentLinks.indexOf(link.split("?")[0]) === -1 ) {
+          if (currentLinks.length < 5 && currentLinks.indexOf(link.split("?")[0]) === -1) {
             currentLinks.push(link.split("?")[0]);
           } else if (
             currentLinks.length >= 5
@@ -276,19 +278,29 @@ bot.on("message", (msg) => {
     }
   }
 
-  if (msg.text.toLowerCase() === "/check"){
+  if (msg.text.toLowerCase() === "/check") {
     let checkedAccount = rankScore.find(item => item.id == msg.reply_to_message.from.id);
-    if(checkedAccount){
+    if (checkedAccount && checkedAccount.twitter) {
       bot.sendMessage(-1001851061739, `Twitter của bạn ${checkedAccount.firstName ?? ""} ${checkedAccount.lastName ?? ""} là: ${checkedAccount.twitter.split("/status")[0] ?? "Không tìm thấy"}`)
-    }else{
+    } else {
       bot.sendMessage(-1001851061739, `Không tìm thấy twitter`)
     }
   }
 
 
   if (msg.text.toLowerCase() === "/link") {
+    if (backupLinks.length > 0 && firstRun) {
+      clonedLinks = JSON.parse(JSON.stringify(backupLinks));
+      currentLinks = JSON.parse(JSON.stringify(backupLinks));
+      let id = uuidv4();
+      idLink = id;
+      ids.push(idLink);
+      firstRun = false;
+    }
     if (currentLinks && clonedLinks && currentLinks[0] != clonedLinks[0] && currentLinks.length == 5) {
       clonedLinks = JSON.parse(JSON.stringify(currentLinks));
+      backupLinks = JSON.parse(JSON.stringify(currentLinks));
+      fs.writeFileSync("./done.json", JSON.stringify(backupLinks));
       let id = uuidv4();
       idLink = id;
       ids.push(idLink);
@@ -327,6 +339,10 @@ Dưới đây là ${currentLinks.length} link gần nhất được gửi trong 
 - Mỗi lần được chọn lên bài ghim channel "được" chia 3 điểm
 Giờ vàng: từ 19h tối tới 7h sáng hàng ngày
     `)
+  }
+
+  if (msg.text.toLowerCase() === "/addtop") {
+    isReverse = true;
   }
 
   if (msg.text.toLowerCase() === "/rank") {
@@ -467,6 +483,7 @@ const filterLink = (doneList, currentList) => {
     if (
       item.id &&
       doneList.indexOf(item.id) === -1 &&
+      doneList.indexOf(item.link.split("/status")[0].split("com/")[1]) &&
       done.indexOf(item.id) === -1 // remove later
     ) {
       let currentAccount = rankScore.find((item1) => item.id == item1.id);
@@ -500,11 +517,13 @@ const filterLink = (doneList, currentList) => {
     );
     whiteList.length = 0;
     finalResult = finalResult.slice(0, 10);
-    isReverse = true;
-  } else {
-    isReverse = false;
   }
-  finalResult.forEach((item) => doneList.push(item.id));
+  finalResult.forEach((item) => {
+    doneList.push(item.id);
+    if(item.score != 999999){
+      doneList.push(item.link.split("/status")[0].split("com/")[1]);
+    }
+  });
   console.log(doneList);
   finalResult.forEach((item) => {
     let currentAccount = rankScore.find((item1) => item1.id == item.id);
@@ -547,8 +566,14 @@ Msg id:  ${currentId}
   const currentHour = currentDate.getHours();
 
   console.log("Current hour:", currentHour);
-  const ghimLink = filterLink(doneTaskList, currentTaskList)
-    .reverse()
+  let ghimLink;
+  if (isReverse) {
+    ghimLink = filterLink(doneTaskList, currentTaskList).reverse()
+  } else {
+    ghimLink = filterLink(doneTaskList, currentTaskList)
+  }
+
+  ghimLink
     .map((item, index) => index + 1 + ". " + item)
     .join("\n")
     .concat(` \n\n${currentHour >= 19 || currentHour < 7 ? "[BOOST] " : ""}Hi ae, đây là 10 post của lượt này, ae tương tác ủng hộ các bạn, xong hết nhớ reply "done all" ( rất quan trọng), có thể kèm link xuống cho ae trả nhé.
@@ -562,6 +587,7 @@ Thank you all`);
   bot.sendMessage(-1001957652310, ghimLink, { disable_web_page_preview: true });
 
   isWork = false;
+  isReverse = false;
   currentTaskList.length = 0;
 
   if (currentHour >= 22) {
