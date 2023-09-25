@@ -11,6 +11,8 @@ const reportList = require("./report.json");
 
 let snapshotList = require("./snapshot.json");
 
+let infoMembers = require("./members.json");
+
 let currentLinks = [];
 let nextLinks = [];
 
@@ -74,9 +76,10 @@ bot.on("message", (msg) => {
 
   if (
     (msg.from.username == "xfinancevn" || msg.from.id == 1087968824 || msg.from.id == 5873879220) &&
-    msg.text.indexOf("/clear") !== -1
+    msg.text.toLowerCase() === "/clear"
   ) {
     whiteList.length = 0;
+    isReverse = false;
     console.log("Remove white list thanh cong: ", whiteList);
   }
   if (
@@ -106,12 +109,14 @@ bot.on("message", (msg) => {
         currentAccount.score < 5 ||
         msg.forward_from
       ) {
-        bot.deleteMessage(chatId, msg.message_id); // Xóa tin nhắn chứa liên kết
-        bot.sendMessage(
-          chatId,
-          msg.from.first_name +
-          " không đủ điểm tối thiểu để gửi liên kết trong nhóm này, vui lòng tương tác các bài ghim trước khi gửi link."
-        );
+        if (msg.sender_chat && msg.sender_chat.id != "-1001976992799") {
+          bot.deleteMessage(chatId, msg.message_id); // Xóa tin nhắn chứa liên kết
+          bot.sendMessage(
+            chatId,
+            msg.from.first_name +
+            " không đủ điểm tối thiểu để gửi liên kết trong nhóm này, vui lòng tương tác các bài ghim trước khi gửi link."
+          );
+        }
       }
     }
     currentTaskList.push({
@@ -135,12 +140,15 @@ bot.on("message", (msg) => {
         currentAccount.score < 5 ||
         msg.forward_from
       ) {
-        bot.deleteMessage(chatId, msg.message_id); // Xóa tin nhắn chứa liên kết
-        bot.sendMessage(
-          chatId,
-          msg.from.first_name +
-          " không đủ điểm tối thiểu để gửi liên kết trong nhóm này, vui lòng tương tác các bài ghim trước khi gửi link."
-        );
+        if (msg.sender_chat && msg.sender_chat.id != "-1001976992799") {
+          bot.deleteMessage(chatId, msg.message_id); // Xóa tin nhắn chứa liên kết
+          bot.sendMessage(
+            chatId,
+            msg.from.first_name +
+            " không đủ điểm tối thiểu để gửi liên kết trong nhóm này, vui lòng tương tác các bài ghim trước khi gửi link."
+          );
+        }
+
       } else {
         currentAccount.score -= 3;
       }
@@ -188,7 +196,7 @@ bot.on("message", (msg) => {
         if (msg.reply_to_message.text.indexOf(`Nếu xong 1 link thì reply "done".`) === -1)
           currentAccount.doneList.push(msg.reply_to_message.message_id);
         if ((currentHour <= 7 || currentHour >= 19) && msg.reply_to_message.text.indexOf(`[BOOST]`) !== -1) {
-          currentAccount.score += 0.5;
+          currentAccount.score += 0.2;
         }
       }
 
@@ -243,7 +251,7 @@ bot.on("message", (msg) => {
       );
       currentAccount.doneList.push(msg.reply_to_message.message_id);
       if ((currentHour <= 7 || currentHour >= 19) && msg.reply_to_message.text.indexOf(`[BOOST]`) !== -1) {
-        currentAccount.score += 10;
+        currentAccount.score += 4;
       }
     } else if (msg.text.toLowerCase().indexOf("done2follow") !== -1 && !currentAccount.isFollow) {
       currentAccount.score += 30;
@@ -267,7 +275,7 @@ bot.on("message", (msg) => {
       currentAccount.idsLink.push(idLink)
       currentAccount.score += 7.5;
       if ((currentHour <= 7 || currentHour >= 19)) {
-        currentAccount.score += 2.5;
+        currentAccount.score += 1;
       }
       console.log(
         "User " +
@@ -287,6 +295,33 @@ bot.on("message", (msg) => {
     }
   }
 
+  // /input Văn Bạch | 1998 | Coder | https://twitter.com/xfinancevn_news
+  if (msg.text.toLowerCase().indexOf("/input") !== -1) {
+    let currentMember = msg.text.slice(7).trim().split("|")
+    console.log(currentMember)
+    let idsList = infoMembers.map(item => item.id);
+    if (idsList.indexOf(msg.from.id) === -1) {
+      infoMembers.push({
+        name: currentMember[0].trim(),
+        age: currentMember[1].trim(),
+        info: currentMember[2].trim(),
+        twitter: currentMember[3].trim(),
+        id: msg.from.id,
+        username: msg.from.username,
+        firstName: msg.from.first_name,
+        lastName: msg.from.last_name
+      })
+      console.log(infoMembers);
+      fs.writeFileSync("./members.json", JSON.stringify(infoMembers));
+    }
+  }
+
+
+  // if (msg.text.toLowerCase() === "/check" &&){
+
+  // }
+
+
 
   if (msg.text.toLowerCase() === "/link") {
     if (backupLinks.length > 0 && firstRun) {
@@ -300,7 +335,7 @@ bot.on("message", (msg) => {
     if (currentLinks && clonedLinks && currentLinks[0] != clonedLinks[0] && currentLinks.length == 5) {
       clonedLinks = JSON.parse(JSON.stringify(currentLinks));
       backupLinks = JSON.parse(JSON.stringify(currentLinks));
-      fs.writeFileSync("./done.json", JSON.stringify(backupLinks));
+      fs.writeFileSync("./backupLinks.json", JSON.stringify(backupLinks));
       let id = uuidv4();
       idLink = id;
       ids.push(idLink);
@@ -483,7 +518,7 @@ const filterLink = (doneList, currentList) => {
     if (
       item.id &&
       doneList.indexOf(item.id) === -1 &&
-      doneList.indexOf(item.link.split("/status")[0].split("com/")[1]) &&
+      doneList.indexOf(item.link.split("/status")[0].split("com/")[1]) === -1 &&
       done.indexOf(item.id) === -1 // remove later
     ) {
       let currentAccount = rankScore.find((item1) => item.id == item1.id);
@@ -520,7 +555,7 @@ const filterLink = (doneList, currentList) => {
   }
   finalResult.forEach((item) => {
     doneList.push(item.id);
-    if(item.score != 999999){
+    if (item.score != 999999) {
       doneList.push(item.link.split("/status")[0].split("com/")[1]);
     }
   });
@@ -568,12 +603,12 @@ Msg id:  ${currentId}
   console.log("Current hour:", currentHour);
   let ghimLink;
   if (isReverse) {
-    ghimLink = filterLink(doneTaskList, currentTaskList).reverse()
-  } else {
     ghimLink = filterLink(doneTaskList, currentTaskList)
+  } else {
+    ghimLink = filterLink(doneTaskList, currentTaskList).reverse()
   }
 
-  ghimLink
+  let ghimLinkFinal = ghimLink
     .map((item, index) => index + 1 + ". " + item)
     .join("\n")
     .concat(` \n\n${currentHour >= 19 || currentHour < 7 ? "[BOOST] " : ""}Hi ae, đây là 10 post của lượt này, ae tương tác ủng hộ các bạn, xong hết nhớ reply "done all" ( rất quan trọng), có thể kèm link xuống cho ae trả nhé.
@@ -583,8 +618,8 @@ Nếu xong 1 link thì reply "done".
 - X FINANCE NEWS: https://x.com/xfinancevn_news
 Anh em follow 2 tài khoản này và reply trong nhóm done2follow sẽ được nâng điểm và ưu tiên post bài.
 Thank you all`);
-  console.log("ghimLink: " + ghimLink);
-  bot.sendMessage(-1001957652310, ghimLink, { disable_web_page_preview: true });
+  console.log("ghimLink: " + ghimLinkFinal);
+  bot.sendMessage(-1001957652310, ghimLinkFinal, { disable_web_page_preview: true });
 
   isWork = false;
   isReverse = false;
