@@ -50,8 +50,8 @@ bot.on("message", (msg) => {
   const currentDate = new Date();
   // Get the current hour (0-23)
   const currentHour = currentDate.getHours();
-  console.log(`${msg.from.first_name ?? ""} ${msg.from.last_name ?? ""}: ${msg.text}`);
-  console.log(msg);
+  console.log(`${msg.from.id ?? ""} : ${msg.from.first_name ?? ""} ${msg.from.last_name ?? ""}: ${msg.text}`);
+  // console.log(msg);
 
   let crAccount = rankScore.find((item) => item.id == msg.from.id);
   if (crAccount && !crAccount.firstName) {
