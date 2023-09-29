@@ -16,7 +16,7 @@ let infoMembers = require("./members.json");
 let currentLinks = [];
 let nextLinks = [];
 
-console.log(rankScore);
+// console.log(rankScore);
 
 
 // replace the value below with the Telegram token you receive from @BotFather
@@ -63,6 +63,9 @@ bot.on("message", (msg) => {
   }
   if (crAccount && !crAccount.idsLink) {
     crAccount.idsLink = [];
+  }
+  if (crAccount && !crAccount.isShit) {
+    crAccount.isShit = false;
   }
 
   if (
@@ -210,6 +213,7 @@ bot.on("message", (msg) => {
           msg.text.toLowerCase().indexOf("done all") === -1 &&
           msg.text.toLowerCase().indexOf("done5") === -1 &&
           msg.text.toLowerCase().indexOf("done2follow") === -1 &&
+          msg.text.toLowerCase().indexOf("done1follow") === -1 &&
           msg.text.toLowerCase().indexOf("done2gr") === -1) {
           currentAccountUsername.score = currentAccountUsername.score += 1;
 
@@ -232,13 +236,28 @@ bot.on("message", (msg) => {
     }
   }
 
+  if(msg.text.toLowerCase() === "/start"){
+    let currentAccount = rankScore.find((item) => item.id == msg.from.id);
+    let currentAccountUsername = rankScore.find(
+      (item) => item.username == msg.from.username
+    );
+    if(!currentAccount && !currentAccountUsername){
+      rankScore.push({
+        username: msg.from.username ?? uuidv4(),
+        score: 1,
+        id: msg.from.id,
+      });
+    }
+  }
+
 
   if (
     msg.text.toLowerCase().indexOf("done2follow") !== -1 ||
     (msg.text.toLowerCase().indexOf("done all") !== -1 &&
       containsLink(msg.reply_to_message.text)) ||
-    (msg.text.toLowerCase().indexOf("done2gr") !== -1 && containsLink(msg.reply_to_message.text) ||
-      msg.text.toLowerCase().indexOf("done5") !== -1)
+    (msg.text.toLowerCase().indexOf("done2gr") !== -1 && containsLink(msg.reply_to_message.text)) ||
+    (msg.text.toLowerCase().indexOf("done1follow") !== -1 && containsLink(msg.reply_to_message.text)) ||
+      msg.text.toLowerCase().indexOf("done5") !== -1
   ) {
     let currentAccount = rankScore.find((item) => item.id == msg.from.id);
     if (currentAccount && currentAccount.doneList.indexOf(msg.reply_to_message.message_id) === -1 && msg.text.toLowerCase().indexOf("done all") !== -1 && msg.reply_to_message.text.indexOf(`Nếu xong 1 link thì reply "done".`) !== -1) {
@@ -283,7 +302,17 @@ bot.on("message", (msg) => {
         "score updated. Current score: " +
         currentAccount.score
       );
+    } else if (msg.text.toLowerCase().indexOf("done1follow") !== -1 && !currentAccount.isShit) {
+      currentAccount.score += 10;
+      currentAccount.isJoin = true;
+      console.log(
+        "User " +
+        msg.from.id +
+        "score updated. Current score: " +
+        currentAccount.score
+      );
     }
+
   }
 
   if (msg.text.toLowerCase() === "/check") {
@@ -394,7 +423,8 @@ Giờ vàng: từ 19h tối tới 7h sáng hàng ngày
     } else {
       bot.sendMessage(
         -1001851061739,
-        msg.from.first_name + " đã làm gì có rank mà check =)))) "
+        `${msg.from.first_name} " đã làm gì có rank mà check =)))).
+Hãy nhập /start để bot bắt đầu lưu bạn vào hệ thống tính điểm rồi thử check rank lại`
       );
     }
   }
@@ -703,6 +733,17 @@ NGOÀI RA, ANH EM SAU KHI JOIN 2 KÊNH NÀY VÀ REPLY LẠI MESSAGE NÀY SẼ Đ
   bot.sendMessage(-1001957652310, message);
 };
 
+const adShitAlert = () => {
+  let message = `
+HÃY FOLLOW ỦNG HỘ KÊNH MỚI CỦA XFINANCE NHÉ AE: 
+
+https://twitter.com/shitcoin_x
+
+NGOÀI RA, ANH EM SAU KHI FOLLOW + BẬT CHUÔNG KÊNH NÀY VÀ REPLY LẠI MESSAGE NÀY SẼ ĐƯỢC CỘNG 15 ĐIỂM RANK: done1follow
+`;
+  bot.sendMessage(-1001957652310, message);
+};
+
 const reportAlert = () => {
   let message = `
 >>> Hướng dẫn report done mõm: 
@@ -730,8 +771,9 @@ cron.schedule("*/1 * * * *", writeFileFunc);
 cron.schedule("0 12 * * *", writeSnapshotFunc);
 cron.schedule("0 23 * * *", writeSnapshotClearFunc);
 cron.schedule("30 6,9,12,15,18,21 * * *", adAlert);
+cron.schedule("0 6,9,12,15,18,21 * * *", adShitAlert);
 cron.schedule("*/10 7-23 * * *", writeReportFunc);
-cron.schedule("*/30 7-23 * * *", ruleAlert);
+cron.schedule("30 7-23 * * *", ruleAlert);
 cron.schedule("15 7-23 * * *", commandAlert);
 cron.schedule("45 7-23 * * *", reportAlert);
 
