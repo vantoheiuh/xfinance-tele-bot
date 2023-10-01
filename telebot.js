@@ -153,7 +153,7 @@ bot.on("message", (msg) => {
         }
 
       } else {
-        currentAccount.score -= 3;
+        currentAccount.score -= 5;
       }
 
       if ((msg.text.indexOf("x.com") !== -1 || msg.text.indexOf("twitter.com/") !== -1) && msg.text.indexOf("/status/") !== -1 && extractUrls(msg.text).length > 0) {
