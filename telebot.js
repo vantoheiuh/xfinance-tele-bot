@@ -15,6 +15,8 @@ let infoMembers = require("./members.json");
 
 let currentLinks = [];
 let nextLinks = [];
+let message5link = "";
+let markup5link;
 
 // console.log(rankScore);
 
@@ -69,16 +71,16 @@ bot.on("message", (msg) => {
   }
 
   if (
-    (msg.from.username == "xfinancevn" || msg.from.id == 1087968824 || msg.from.id == 5873879220) &&
+    (msg.from.username == "xfinancevn" || msg.from.id == 1087968824 || msg.from.id == 5873879220 || msg.from.id == 1212092150) &&
     msg.text.indexOf("/add") !== -1 && msg.text.indexOf("/addtop") === -1
   ) {
-    if (containsLink(whiteList.push(msg.text.split(" ")[1])) && whiteList.indexOf(msg.text.split(" ")[1]) !== -1)
+    if (containsLink(msg.text.split(" ")[1]) && whiteList.indexOf(msg.text.split(" ")[1].split("?")[0]) === -1)
       whiteList.push(msg.text.split(" ")[1].split("?")[0]);
     console.log("Add white list thanh cong: ", whiteList);
   }
 
   if (
-    (msg.from.username == "xfinancevn" || msg.from.id == 1087968824 || msg.from.id == 5873879220) &&
+    (msg.from.username == "xfinancevn" || msg.from.id == 1087968824 || msg.from.id == 5873879220 || msg.from.ud == 1212092150) &&
     msg.text.toLowerCase() === "/clear"
   ) {
     whiteList.length = 0;
@@ -112,14 +114,12 @@ bot.on("message", (msg) => {
         currentAccount.score < 5 ||
         msg.forward_from
       ) {
-        if (msg.sender_chat && msg.sender_chat.id != "-1001976992799") {
-          bot.deleteMessage(chatId, msg.message_id); // Xóa tin nhắn chứa liên kết
-          bot.sendMessage(
-            chatId,
-            msg.from.first_name +
-            " không đủ điểm tối thiểu để gửi liên kết trong nhóm này, vui lòng tương tác các bài ghim trước khi gửi link."
-          );
-        }
+        bot.deleteMessage(chatId, msg.message_id); // Xóa tin nhắn chứa liên kết
+        bot.sendMessage(
+          chatId,
+          msg.from.first_name +
+          " không đủ điểm tối thiểu để gửi liên kết trong nhóm này, vui lòng tương tác các bài ghim trước khi gửi link."
+        );
       }
     }
     currentTaskList.push({
@@ -143,14 +143,12 @@ bot.on("message", (msg) => {
         currentAccount.score < 5 ||
         msg.forward_from
       ) {
-        if (msg.sender_chat && msg.sender_chat.id != "-1001976992799") {
-          bot.deleteMessage(chatId, msg.message_id); // Xóa tin nhắn chứa liên kết
-          bot.sendMessage(
-            chatId,
-            msg.from.first_name +
-            " không đủ điểm tối thiểu để gửi liên kết trong nhóm này, vui lòng tương tác các bài ghim trước khi gửi link."
-          );
-        }
+        bot.deleteMessage(chatId, msg.message_id); // Xóa tin nhắn chứa liên kết
+        bot.sendMessage(
+          chatId,
+          msg.from.first_name +
+          " không đủ điểm tối thiểu để gửi liên kết trong nhóm này, vui lòng tương tác các bài ghim trước khi gửi link."
+        );
 
       } else {
         currentAccount.score -= 5;
@@ -236,12 +234,12 @@ bot.on("message", (msg) => {
     }
   }
 
-  if(msg.text.toLowerCase() === "/start"){
+  if (msg.text.toLowerCase() === "/start") {
     let currentAccount = rankScore.find((item) => item.id == msg.from.id);
     let currentAccountUsername = rankScore.find(
       (item) => item.username == msg.from.username
     );
-    if(!currentAccount && !currentAccountUsername){
+    if (!currentAccount && !currentAccountUsername) {
       rankScore.push({
         username: msg.from.username ?? uuidv4(),
         score: 1,
@@ -257,11 +255,11 @@ bot.on("message", (msg) => {
       containsLink(msg.reply_to_message.text)) ||
     (msg.text.toLowerCase().indexOf("done2gr") !== -1 && containsLink(msg.reply_to_message.text)) ||
     (msg.text.toLowerCase().indexOf("done1follow") !== -1 && containsLink(msg.reply_to_message.text)) ||
-      msg.text.toLowerCase().indexOf("done5") !== -1
+    msg.text.toLowerCase().indexOf("done5") !== -1
   ) {
     let currentAccount = rankScore.find((item) => item.id == msg.from.id);
     if (currentAccount && currentAccount.doneList.indexOf(msg.reply_to_message.message_id) === -1 && msg.text.toLowerCase().indexOf("done all") !== -1 && msg.reply_to_message.text.indexOf(`Nếu xong 1 link thì reply "done".`) !== -1) {
-      currentAccount.score += 20;
+      currentAccount.score += 60;
       console.log(
         "User " +
         msg.from.id +
@@ -269,9 +267,9 @@ bot.on("message", (msg) => {
         currentAccount.score
       );
       currentAccount.doneList.push(msg.reply_to_message.message_id);
-      if ((currentHour <= 7 || currentHour >= 19) && msg.reply_to_message.text.indexOf(`[BOOST]`) !== -1) {
-        currentAccount.score += 4;
-      }
+      // if ((currentHour <= 7 || currentHour >= 19) && msg.reply_to_message.text.indexOf(`[BOOST]`) !== -1) {
+      //   currentAccount.score += 1;
+      // }
     } else if (msg.text.toLowerCase().indexOf("done2follow") !== -1 && !currentAccount.isFollow) {
       currentAccount.score += 30;
       currentAccount.isFollow = true;
@@ -292,10 +290,10 @@ bot.on("message", (msg) => {
       );
     } else if (msg.text.toLowerCase().indexOf("done5") !== -1 && currentAccount.idsLink.indexOf(idLink) === -1 && msg.reply_to_message.text.indexOf(idLink) !== -1) {
       currentAccount.idsLink.push(idLink)
-      currentAccount.score += 7.5;
-      if ((currentHour <= 7 || currentHour >= 19)) {
-        currentAccount.score += 1;
-      }
+      currentAccount.score += 20;
+      // if ((currentHour <= 7 || currentHour >= 19)) {
+      //   currentAccount.score += 5;
+      // }
       console.log(
         "User " +
         msg.from.id +
@@ -377,14 +375,22 @@ bot.on("message", (msg) => {
       let finalLinkMarkup = {
         inline_keyboard: linkMarkUp
       }
-      // console.log(finalLinkMarkup);
 
       // Tin nhắn với inline keyboard
       const messageOptions = {
         reply_markup: finalLinkMarkup,
       };
 
+      message5link = `MSG id: ${idLink}
+Done5 = 20 điểm
+DONE ALL bài ghim = 60 điểm!
+Dưới đây là ${currentLinks.length} link gần nhất được gửi trong nhóm chat để tương tác, sau khi tương tác xong hãy reply lại message này với từ khóa: done5 để bot cộng điểm.`
+
+      markup5link = JSON.parse(JSON.stringify(messageOptions));
+
       bot.sendMessage(-1001851061739, `MSG id: ${idLink}
+Done5 = 20 điểm
+DONE ALL bài ghim = 60 điểm!
 Dưới đây là ${currentLinks.length} link gần nhất được gửi trong nhóm chat để tương tác, sau khi tương tác xong hãy reply lại message này với từ khóa: done5 để bot cộng điểm.`, messageOptions);
 
     } else {
@@ -395,10 +401,10 @@ Dưới đây là ${currentLinks.length} link gần nhất được gửi trong 
   }
   if (msg.text.toLowerCase() === "/point") {
     bot.sendMessage(-1001851061739, `CƠ CHẾ TÍNH POINT CÀY RANK X FINANCE:
-- Tương tác bài ghim link (done all): 20 điểm, giờ vàng: 30 điểm
-- Tương tác lẻ 1 link trong group chat (done): 1 điểm, giờ vàng: 1.5 điểm
-- Tương tác 5 link gần nhất từ lệnh /link (done5): 7.5 điểm, giờ vàng: 10 điểm
-- done2gr và done2follow ( hiệu lực 1 lần mỗi account): 30 điểm
+- Tương tác bài ghim link (done all): 60 điểm
+- Tương tác lẻ 1 link trong group chat (done): 1 điểm
+- Tương tác 5 link gần nhất từ lệnh /link (done5): 20 điểm
+- done2gr và done2follow ( hiệu lực 1 lần mỗi account): 30 điểm - 1 lần duy nhất
 - Mỗi lần post link trong group chat trừ 3 điểm
 - Mỗi lần được chọn lên bài ghim channel "được" chia 3 điểm
 Giờ vàng: từ 19h tối tới 7h sáng hàng ngày
@@ -421,11 +427,16 @@ Giờ vàng: từ 19h tối tới 7h sáng hàng ngày
         -1001851061739,
         `Thứ hạng hiện tại của bạn ${msg.from.first_name ?? ""} ${msg.from.last_name ?? ""} là: ${currentAccountIndex}/${sortedRankScore.length}`);
     } else {
+      rankScore.push({
+        username: msg.from.username ?? uuidv4(),
+        score: 1,
+        id: msg.from.id,
+      });
+
       bot.sendMessage(
         -1001851061739,
-        `${msg.from.first_name} " đã làm gì có rank mà check =)))).
-Hãy nhập /start để bot bắt đầu lưu bạn vào hệ thống tính điểm rồi thử check rank lại`
-      );
+        `Thứ hạng hiện tại của bạn ${msg.from.first_name ?? ""} ${msg.from.last_name ?? ""} là: ${sortedRankScore.length}/${sortedRankScore.length}`);
+      
     }
   }
 
@@ -568,10 +579,11 @@ const filterLink = (doneList, currentList) => {
   });
   console.log("result: " + result);
 
-  let finalResult = result.sort((a, b) => b.score - a.score).slice(0, 10);
+  let finalResult = result.sort((a, b) => b.score - a.score).slice(0, 12);
   if (whiteList.length > 0) {
+    let finalLink = result.map(item => item.link)
     whiteList.forEach((item) => {
-      if (finalResult.indexOf(item) === -1) {
+      if (finalLink.indexOf(item) === -1) {
         finalResult.unshift({
           id: uuidv4(),
           link: item,
@@ -581,7 +593,7 @@ const filterLink = (doneList, currentList) => {
     }
     );
     whiteList.length = 0;
-    finalResult = finalResult.slice(0, 10);
+    finalResult = finalResult.slice(0, 12);
   }
   finalResult.forEach((item) => {
     doneList.push(item.id);
@@ -641,8 +653,9 @@ Msg id:  ${currentId}
   let ghimLinkFinal = ghimLink
     .map((item, index) => index + 1 + ". " + item)
     .join("\n")
-    .concat(` \n\n${currentHour >= 19 || currentHour < 7 ? "[BOOST] " : ""}Hi ae, đây là 10 post của lượt này, ae tương tác ủng hộ các bạn, xong hết nhớ reply "done all" ( rất quan trọng), có thể kèm link xuống cho ae trả nhé.
+    .concat(` \n\n${currentHour >= 19 || currentHour < 7 ? "[BOOST] " : ""}Hi ae, đây là các post của lượt này, ae tương tác ủng hộ các bạn, xong hết nhớ reply "done all" ( rất quan trọng), có thể kèm link xuống cho ae trả nhé.
 Nếu xong 1 link thì reply "done".
+DONE ALL = 60 điểm nhé anh em!
 \n>>>>> Các kênh chính thức của #XFINANCE:
 - X FINANCE: https://x.com/xfinancevn
 - X FINANCE NEWS: https://x.com/xfinancevn_news
@@ -733,13 +746,22 @@ NGOÀI RA, ANH EM SAU KHI JOIN 2 KÊNH NÀY VÀ REPLY LẠI MESSAGE NÀY SẼ Đ
   bot.sendMessage(-1001957652310, message);
 };
 
-const adShitAlert = () => {
+const pointUpdateAlert = () => {
   let message = `
-HÃY FOLLOW ỦNG HỘ KÊNH MỚI CỦA XFINANCE NHÉ AE: 
+THÔNG BÁO CẬP NHẬT ĐIỂM CÀY RANK
 
-https://twitter.com/shitcoin_x
-
-NGOÀI RA, ANH EM SAU KHI FOLLOW + BẬT CHUÔNG KÊNH NÀY VÀ REPLY LẠI MESSAGE NÀY SẼ ĐƯỢC CỘNG 15 ĐIỂM RANK: done1follow
+Để đảm bảo lượt giá trị cho anh em lên ghim channel, 
+ad quyết định nâng số điểm khi tương tác bài ghim "done all" , cụ thể anh em xem bảng tính điểm phía dưới nhé:
+  
+- done all - Tương tác bài ghim link : 60 điểm
+  
+- done5 - Tương tác 5 link gần nhất từ lệnh /link: 20 điểm
+  
+- done - Tương tác lẻ 1 link trong group chat : 1 điểm
+  
+- done2gr và done2follow ( hiệu lực 1 lần mỗi account): 30 điểm
+  
+Ngoài ra, GIỜ VÀNG sẽ bị loại bỏ để đảm báo đều tương tác các khung giờ. Thanks anh em
 `;
   bot.sendMessage(-1001957652310, message);
 };
@@ -754,6 +776,12 @@ Bot sẽ lưu lại và có hướng xử lí những ae bị report nhiều l�
   `;
   bot.sendMessage(-1001851061739, message);
 };
+
+
+const done5Alert = () => {
+  if (message5link && markup5link)
+    bot.sendMessage(-1001851061739, message5link, markup5link);
+}
 
 const commandAlert = () => {
   let message = `
@@ -771,11 +799,12 @@ cron.schedule("*/1 * * * *", writeFileFunc);
 cron.schedule("0 12 * * *", writeSnapshotFunc);
 cron.schedule("0 23 * * *", writeSnapshotClearFunc);
 cron.schedule("30 6,9,12,15,18,21 * * *", adAlert);
-cron.schedule("0 6,9,12,15,18,21 * * *", adShitAlert);
-cron.schedule("*/10 7-23 * * *", writeReportFunc);
-cron.schedule("30 7-23 * * *", ruleAlert);
-cron.schedule("15 7-23 * * *", commandAlert);
-cron.schedule("45 7-23 * * *", reportAlert);
+cron.schedule("50 6,9,12,15,18,21 * * *", pointUpdateAlert);
+cron.schedule("*/18 7-23 * * *", writeReportFunc);
+cron.schedule("*/10 7-23 * * *", done5Alert);
+cron.schedule("32 7-23 * * *", ruleAlert);
+cron.schedule("12 7-23 * * *", commandAlert);
+cron.schedule("42 7-23 * * *", reportAlert);
 
 cron.schedule("0 7,10,13,16,19,22 * * *", async () => {
   console.log("Cron job started.");
