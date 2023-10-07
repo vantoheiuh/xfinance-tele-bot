@@ -17,18 +17,18 @@ const fs = require('fs');
 
 
 let urls = [
-    'https://twitter.com/PimarketApp/status/1709423985455476953',
-    'https://x.com/thaindnguyen/status/1709943504833794281',
-    'https://x.com/maiphuong2x/status/1709777835051901340',
-    'https://x.com/Tracyxp212/status/1709897977551331436',
-    'https://x.com/phanquochaut4/status/1709906177939972591',
-    'https://twitter.com/emieseth/status/1709875889599865026',
-    'https://twitter.com/Doom_XFinance/status/1709907225517674710',
-    'https://twitter.com/Q091000/status/1709949785900449998',
-    'https://x.com/inhvnthin11/status/1709946984759734697',
-    'https://twitter.com/vuongthai90/status/1709937202854334483',
-    'https://x.com/daity510/status/1709777199396757886',
-    'https://x.com/ntawinter/status/1709872209244881207'
+    'https://x.com/xfinancevn/status/1710181899073888363?s=46&t=YscXrj-m4APmdbiNwqm-iA',
+    'https://x.com/xfinancevn_news/status/1710120169270550538',
+    'https://x.com/namsb88/status/1710096798856204368',
+    'https://twitter.com/vuongthai90/status/1710171480494154052',
+    'https://twitter.com/TaiBuiZ1000/status/1710159260452311074',
+    'https://twitter.com/TuLa1219/status/1710029785970454686',
+    'https://twitter.com/THNGLUVN627598/status/1710133125366665278',
+    'https://x.com/xglobaltravel/status/1710095462697771131',
+    'https://twitter.com/AkaiTrading/status/1710118641457680426',
+    'https://x.com/CryptoHQN/status/1710109927891751179',
+    'https://x.com/hung_bnb/status/1710171390039802192',
+    'https://twitter.com/ladson_lady/status/1709971463258976268'
   ]
 
 //twscrape user_by_login USERNAME
@@ -40,25 +40,33 @@ let urls = [
 
 
 
-const checkVar = (urls, username) => {
+const checkVar = (urls, username, twitterIdStr) => {
     console.log("Đang check var: " + username)
-    const userInfoRaw = require('child_process').execSync(`twscrape user_by_login ${username}`).toString();
 
-    const userInfo = JSON.parse(userInfoRaw)
-    const idURLs = urls.map(item => item.split("status/")[1]);
-    const result = require('child_process').execSync(`twscrape user_tweets_and_replies ${userInfo.id_str} --limit=1 > ./users/${username}.txt`).toString();
+    const missingPosts = []
+  
+    let path = `./users/${username}${urls.length}.txt`
+    const idURLs = urls.map(item => item.split("status/")[1].split("?")[0]);
+    const result = require('child_process').execSync(`twscrape user_tweets_and_replies ${twitterIdStr} --limit=${urls.length === 5 ? 1 : 50} > ${path}`).toString();
 
-    const dataRaw = fs.readFileSync(`./users/${username}.txt`, { encoding: 'utf-8' });
+
+  
+    const dataRaw = fs.readFileSync(path, { encoding: 'utf-8' });
     const finalData = dataRaw.split("\n").filter(item => item).map(item => JSON.parse(item).id_str);
     let count = 0;
     idURLs.forEach(id => {
-        if (finalData.indexOf(id) !== -1) {
-            count += 1;
-        }
+      if (finalData.indexOf(id) != -1) {
+        count += 1;
+      }else{
+        console.log(urls.find(item => item.indexOf(id) !== -1))
+        missingPosts.push(urls.find(item => item.indexOf(id) !== -1))
+      }
     });
     console.log(`Tổng tương tác của ${username}: ${count}/${idURLs.length}`)
-    return count;
-}
+    return {count, missingPosts};
+  }
 
-checkVar(urls, "coincomedian");
+const a = checkVar(urls, "thaidozk", "1677720785396596736");
+
+console.log(a)
 
