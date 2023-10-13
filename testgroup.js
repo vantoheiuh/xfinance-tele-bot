@@ -20,16 +20,13 @@ let markup5link;
 
 // console.log(rankScore);
 
-
 // replace the value below with the Telegram token you receive from @BotFather
 const token = "6365967741:AAGSkAZjcF-EtMUHAZCxGuDSdlnn0j654CI";
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
 
-
-bot.on("message", msg => {
-    console.log(msg)
-
-    bot.sendMessage(msg.chat.id, "hello", {reply_to_message_id: msg.message_id})
-})
+bot.on("message", async (msg) => {
+  if (msg.text == "done all") await sleep(15000);
+  console.log(msg);
+});
