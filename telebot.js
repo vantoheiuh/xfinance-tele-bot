@@ -242,7 +242,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
       if (
         !currentAccount ||
         listIds.indexOf(msg.from.id) === -1 ||
-        currentAccount.score < 5 ||
+        currentAccount.score < 20 ||
         msg.forward_from
       ) {
         bot.deleteMessage(chatId, msg.message_id); // Xóa tin nhắn chứa liên kết
@@ -276,7 +276,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
       if (
         !currentAccount ||
         listIds.indexOf(msg.from.id) === -1 ||
-        currentAccount.score < 5 ||
+        currentAccount.score < 20 ||
         msg.forward_from
       ) {
         bot.deleteMessage(chatId, msg.message_id); // Xóa tin nhắn chứa liên kết
@@ -287,7 +287,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
           { disable_web_page_preview: true }
         );
       } else {
-        currentAccount.score -= 5;
+        currentAccount.score -= 20;
       }
 
       if (
