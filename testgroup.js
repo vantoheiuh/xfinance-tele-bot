@@ -30,3 +30,6 @@ bot.on("message", async (msg) => {
   if (msg.text == "done all") await sleep(15000);
   console.log(msg);
 });
+console.log("Đang kiểm tra số lượng member hoạt động trong tuần.")
+const a = rankScore.filter(item => item.doneList && item.doneList.length >0).filter(item => item.doneList.some(i => i > 150216)).length;
+console.log("Kết quả: ", a)

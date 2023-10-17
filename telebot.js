@@ -62,7 +62,7 @@ bot.on("message", async (msg) => {
       msg.from.last_name ?? ""
     }: ${msg.text}`
   );
-  // console.log(msg);
+  console.log(msg);
 
   let crAccount = rankScore.find((item) => item.id == msg.from.id);
   if (crAccount && !crAccount.firstName) {
@@ -82,8 +82,30 @@ bot.on("message", async (msg) => {
     crAccount.isShit = false;
   }
 
-  if(msg.text.toLowerCase().indexOf("done all") !== -1 || msg.text.toLowerCase().indexOf("done5") !== -1) {
-    await checkAndSleep()
+
+  if (
+    msg.text.toLowerCase().indexOf("done all") !== -1 ||
+    msg.text.toLowerCase().indexOf("done5") !== -1
+  ) {
+    const now = new Date();
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    const second = now.getSeconds();
+
+    if (
+      (hour === 6 ||
+        hour === 9 ||
+        hour === 12 ||
+        hour === 15 ||
+        hour === 18 ||
+        hour === 21) &&
+      minute === 59 &&
+      second >= 15
+    ) {
+      // Thực hiện công việc và sleep 60 giây
+      console.log("Sleep 60s");
+      return;
+    }
   }
 
   //CHECK VAR DONE ALL
@@ -137,6 +159,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
         { reply_to_message_id: msg.message_id }
       );
     }
+    return;
   }
 
   //ADD, ADDTOP & REMOVE WHITELIST
@@ -482,6 +505,19 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
           twitterUsername,
           currentAccount.twitterIdStr
         );
+        if (!checkVarResult) {
+          bot.sendMessage(
+            chatId,
+            `Kết quả check var của bạn ${msg.from.first_name} ${
+              msg.from.last_name ? msg.from.last_name : ""
+            } là: KHÔNG KIỂM TRA ĐƯỢC, VUI LÒNG TẮT CHẾ ĐỘ CHỈ TÍCH XANH COMMENTS`,
+            {
+              disable_web_page_preview: true,
+              reply_to_message_id: msg.message_id,
+            }
+          );
+          return;
+        }
         const varCount = checkVarResult.count;
         const missingPosts = checkVarResult.missingPosts;
 
@@ -617,6 +653,19 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
           twitterUsername,
           currentAccount.twitterIdStr
         );
+        if (!checkVarResult) {
+          bot.sendMessage(
+            chatId,
+            `Kết quả check var của bạn ${msg.from.first_name} ${
+              msg.from.last_name ? msg.from.last_name : ""
+            } là: KHÔNG KIỂM TRA ĐƯỢC, VUI LÒNG TẮT CHẾ ĐỘ CHỈ TÍCH XANH COMMENTS`,
+            {
+              disable_web_page_preview: true,
+              reply_to_message_id: msg.message_id,
+            }
+          );
+          return;
+        }
         const varCount = checkVarResult.count;
         const missingPosts = checkVarResult.missingPosts;
         let sortedRankScore = rankScore.sort((a, b) => b.score - a.score);
@@ -1293,33 +1342,46 @@ const check5link = (idsLink, currentMessage) => {
 };
 
 const checkVar = (urls, username, twitterIdStr) => {
-  console.log("Đang check var: " + username);
-  const missingPosts = [];
-  let path = `./users/${username}${urls.length}.txt`;
-  const idURLs = urls.map((item) => item.split("status/")[1].split("?")[0]);
-  const result = require("child_process")
-    .execSync(
-      `twscrape user_tweets_and_replies ${twitterIdStr} --limit=${
-        urls.length === 5 ? 20 : 50
-      } > ${path}`
-    )
-    .toString();
+  try {
+    console.log("Đang check var: " + username);
+    const missingPosts = [];
+    let path = `./users/${username}${urls.length}.txt`;
+    const idURLs = urls.map((item) => item.split("status/")[1].split("?")[0]);
 
-  const dataRaw = fs.readFileSync(path, { encoding: "utf-8" });
-  const finalData = dataRaw
-    .split("\n")
-    .filter((item) => item)
-    .map((item) => JSON.parse(item).id_str);
-  let count = 0;
-  idURLs.forEach((id) => {
-    if (finalData.indexOf(id) !== -1) {
-      count += 1;
-    } else {
-      missingPosts.push(urls.find((item) => item.indexOf(id) !== -1));
-    }
-  });
-  console.log(`Tổng tương tác của ${username}: ${count}/${idURLs.length}`);
-  return { count, missingPosts };
+    // const result = require("child_process")
+    //   .execSync(
+    //     `twscrape user_tweets_and_replies ${twitterIdStr} --limit=${
+    //       urls.length === 5 ? 1 : 1
+    //     } > ${path}`
+    //   )
+    //   .toString();
+    const result = require("child_process")
+      .execSync(
+        `python3 scrape.py ${twitterIdStr} ${username} ${path} ${
+          urls.length === 5 ? 20 : 50
+        }`
+      )
+      .toString();
+
+    const dataRaw = fs.readFileSync(path, { encoding: "utf-8" });
+    const finalData = dataRaw
+      .split("\n")
+      .filter((item) => item)
+      .map((item) => JSON.parse(item).id_str);
+    let count = 0;
+    idURLs.forEach((id) => {
+      if (finalData.indexOf(id) !== -1) {
+        count += 1;
+      } else {
+        missingPosts.push(urls.find((item) => item.indexOf(id) !== -1));
+      }
+    });
+    console.log(`Tổng tương tác của ${username}: ${count}/${idURLs.length}`);
+    return { count, missingPosts };
+  } catch (error) {
+    console.log(error.message);
+    return null;
+  }
 };
 
 const done5Alert = () => {
@@ -1363,14 +1425,19 @@ async function checkAndSleep() {
   const second = now.getSeconds();
 
   if (
-    (hour === 6 || hour === 9 || hour === 12|| hour === 15|| hour === 18|| hour === 21) &&
+    (hour === 6 ||
+      hour === 9 ||
+      hour === 12 ||
+      hour === 15 ||
+      hour === 18 ||
+      hour === 21) &&
     minute === 59 &&
     second >= 15
   ) {
     // Thực hiện công việc và sleep 60 giây
-    console.log("Sleep 60s")
-    await sleep(60000) // Kích hoạt lại sau 60 giây
-  } 
+    console.log("Sleep 60s");
+    await sleep(60000); // Kích hoạt lại sau 60 giây
+  }
 }
 
 // Khởi động ứng dụng

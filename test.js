@@ -108,10 +108,10 @@ let ghimLinkFinal =
   Anh em follow 2 tài khoản này và reply trong nhóm done2follow sẽ được 30 điểm.
   Thank you all`);
 
-console.log(ghimLinkFinal);
 
 const checkVar = (urls, username, twitterIdStr) => {
-  console.log("Đang check var: " + username);
+  try {
+    console.log("Đang check var: " + username);
 
   const missingPosts = [];
 
@@ -119,9 +119,9 @@ const checkVar = (urls, username, twitterIdStr) => {
   const idURLs = urls.map((item) => item.split("status/")[1].split("?")[0]);
   const result = require("child_process")
     .execSync(
-      `twscrape user_tweets_and_replies ${twitterIdStr} --limit=${
-        urls.length === 5 ? 1 : 50
-      } > ${path}`
+      `python3 scrape.py ${twitterIdStr} ${username} ${path} ${
+        urls.length === 5 ? 20 : 120
+      }`
     )
     .toString();
 
@@ -135,14 +135,17 @@ const checkVar = (urls, username, twitterIdStr) => {
     if (finalData.indexOf(id) != -1) {
       count += 1;
     } else {
-      console.log(urls.find((item) => item.indexOf(id) !== -1));
       missingPosts.push(urls.find((item) => item.indexOf(id) !== -1));
     }
   });
   console.log(`Tổng tương tác của ${username}: ${count}/${idURLs.length}`);
   return { count, missingPosts };
+  } catch (error) {
+    return null;
+  }
+  
 };
 
-const a = checkVar(urls, "xfinancevn_news", "1677720785396596736");
+const a = checkVar(urls, "yukichan2k2", "1696663936677085184");
 
 console.log(a);
