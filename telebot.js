@@ -81,6 +81,9 @@ bot.on("message", async (msg) => {
   if (crAccount && !crAccount.isShit) {
     crAccount.isShit = false;
   }
+  if(crAccount && !crAccount.is2Follow){
+    crAccount.is2Follow = false;
+  }
 
 
   if (
@@ -361,7 +364,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
         currentAccount.doneList.indexOf(msg.reply_to_message.message_id) ===
           -1 &&
         msg.text.toLowerCase().indexOf("done all") === -1 &&
-        msg.text.toLowerCase().indexOf("done2follow") === -1 &&
+        msg.text.toLowerCase().indexOf("done2fl") === -1 &&
         msg.text.toLowerCase().indexOf("done2gr") === -1
       ) {
         currentAccount.score += 1;
@@ -392,7 +395,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
         if (
           msg.text.toLowerCase().indexOf("done all") === -1 &&
           msg.text.toLowerCase().indexOf("done5") === -1 &&
-          msg.text.toLowerCase().indexOf("done2follow") === -1 &&
+          msg.text.toLowerCase().indexOf("done2fl") === -1 &&
           msg.text.toLowerCase().indexOf("done1follow") === -1 &&
           msg.text.toLowerCase().indexOf("done2gr") === -1
         ) {
@@ -434,7 +437,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
 
   // DONE CAC LOAI
   if (
-    msg.text.toLowerCase().indexOf("done2follow") !== -1 ||
+    msg.text.toLowerCase().indexOf("done2fl") !== -1 ||
     (msg.text.toLowerCase().indexOf("done all") !== -1 &&
       containsLink(msg.reply_to_message.text)) ||
     (msg.text.toLowerCase().indexOf("done2gr") !== -1 &&
@@ -582,17 +585,31 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
       //   currentAccount.score += 1;
       // }
     } else if (
-      msg.text.toLowerCase().indexOf("done2follow") !== -1 &&
-      !currentAccount.isFollow
+      msg.text.toLowerCase().indexOf("done2fl") !== -1 &&
+      !currentAccount.is2Follow
     ) {
-      currentAccount.score += 30;
-      currentAccount.isFollow = true;
-      console.log(
-        "User " +
-          msg.from.id +
-          "score updated. Current score: " +
-          currentAccount.score
-      );
+      if(currentAccount.isFollow){
+        currentAccount.score += 15;
+        currentAccount.is2Follow = true;
+        currentAccount.isFollow = true;
+        console.log(
+          "User " +
+            msg.from.id +
+            "score updated. Current score: " +
+            currentAccount.score
+        );
+      }else{
+        currentAccount.score += 30;
+        currentAccount.is2Follow = true;
+        currentAccount.isFollow = true;
+        console.log(
+          "User " +
+            msg.from.id +
+            "score updated. Current score: " +
+            currentAccount.score
+        );
+      }
+      
     } else if (
       msg.text.toLowerCase().indexOf("done2gr") !== -1 &&
       !currentAccount.isJoin
@@ -839,7 +856,7 @@ Dưới đây là ${currentLinks.length} link gần nhất mà bạn chưa tươ
 - Tương tác bài ghim link (done all): 60 điểm
 - Tương tác lẻ 1 link trong group chat (done): 1 điểm
 - Tương tác 5 link gần nhất từ lệnh /link (done5): 20 điểm
-- done2gr và done2follow ( hiệu lực 1 lần mỗi account): 30 điểm - 1 lần duy nhất
+- done2gr và done2fl ( hiệu lực 1 lần mỗi account): 30 điểm - 1 lần duy nhất
 - Mỗi lần post link trong group chat trừ 3 điểm
 - Mỗi lần được chọn lên bài ghim channel "được" chia 3 điểm
 Giờ vàng: từ 19h tối tới 7h sáng hàng ngày
@@ -1164,8 +1181,8 @@ Tối đa 60 điểm cho 1 bài ghim nhé anh em!
 
 >>>>> Các kênh chính thức của #XFINANCE:
 - X FINANCE: https://x.com/xfinancevn
-- X FINANCE NEWS: https://x.com/xfinancevn_news
-Anh em follow 2 tài khoản này và reply trong nhóm done2follow sẽ được 30 điểm.
+- X FINANCE NEWS: https://twitter.com/HiddenGems_X
+Anh em follow 2 tài khoản này và reply trong nhóm done2fl sẽ được 30 điểm.
 Thank you all`);
   console.log("ghimLink: " + ghimLinkFinal);
   bot
@@ -1244,8 +1261,8 @@ const ruleAlert = () => {
 + Gửi link trong nhóm chat sẽ trừ điểm. Cần phải tương tác lại link khác để có điểm
 
 - X FINANCE: https://x.com/xfinancevn
-- X FINANCE NEWS: https://x.com/xfinancevn_news
-Ngoài ra, ae follow 2 tài khoản này và reply trong nhóm done2follow sẽ được nâng điểm và ưu tiên post bài
+- X FINANCE NEWS: https://twitter.com/HiddenGems_X
+Ngoài ra, ae follow 2 tài khoản này và reply trong nhóm done2fl sẽ được nâng điểm và ưu tiên post bài
 `;
   bot.sendMessage(-1001851061739, message, { disable_web_page_preview: true });
 };
