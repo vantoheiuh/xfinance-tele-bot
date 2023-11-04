@@ -10,6 +10,7 @@ let groupId = -1001957652310; // channelId
 const rankScore = require("./score.json");
 
 const full5LinksList = require("./full5links.json");
+const linksObject = require("./linksObject.json");
 
 const waitingList = [];
 
@@ -27,7 +28,7 @@ let markup5link;
 // console.log(rankScore);
 
 // replace the value below with the Telegram token you receive from @BotFather
-const token = "6400705715:AAEIuGZkxkqhUcxTD4G45c2GPOOpPmwIKcM";
+const token = "6400705715:AAGvNZBpcTOFkeplzWjZD3Ftkb7qEjgLkcg";
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
@@ -81,10 +82,13 @@ bot.on("message", async (msg) => {
   if (crAccount && !crAccount.isShit) {
     crAccount.isShit = false;
   }
-  if(crAccount && !crAccount.is2Follow){
+  if (crAccount && !crAccount.is2Follow) {
     crAccount.is2Follow = false;
   }
 
+  // if(msg.text.toLowerCase().indexOf("done5") !== -1 || msg.text.toLowerCase().indexOf("/link") !== -1){
+  //   return;
+  // }
 
   if (
     msg.text.toLowerCase().indexOf("done all") !== -1 ||
@@ -292,64 +296,6 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
       } else {
         currentAccount.score -= 20;
       }
-
-      if (
-        (msg.text.indexOf("x.com") !== -1 ||
-          msg.text.indexOf("twitter.com/") !== -1) &&
-        msg.text.indexOf("/status/") !== -1 &&
-        extractUrls(msg.text).length > 0
-      ) {
-        //5linksetup
-        let links = extractUrls(msg.text);
-        links
-          .filter(
-            (item) =>
-              item.indexOf("/status/") !== -1 &&
-              (item.indexOf("x.com") !== -1 ||
-                item.indexOf("twitter.com/") !== -1)
-          )
-          .forEach((link) => {
-            //new mode
-
-            if (
-              waitingList.indexOf(
-                link.split("?")[0].replace("twitter.com", "x.com")
-              ) == -1
-            ) {
-              waitingList.push(
-                link.split("?")[0].replace("twitter.com", "x.com")
-              );
-              if (waitingList.length == 5) {
-                console.log("WaitingList", waitingList);
-                full5LinksList.unshift({
-                  id: uuidv4(),
-                  waitingList: JSON.parse(JSON.stringify(waitingList)),
-                });
-                waitingList.length = 0;
-              }
-            }
-
-            //for current mode
-            if (
-              currentLinks.length < 5 &&
-              currentLinks.indexOf(link.split("?")[0]) === -1
-            ) {
-              currentLinks.push(link.split("?")[0]);
-            } else if (
-              currentLinks.length >= 5 &&
-              nextLinks.length < 5 &&
-              currentLinks.indexOf(link.split("?")[0]) === -1 &&
-              nextLinks.indexOf(link.split("?")[0]) === -1
-            ) {
-              nextLinks.push(link.split("?")[0]);
-            }
-            if (currentLinks.length >= 5 && nextLinks.length >= 5) {
-              currentLinks.length = 0;
-              currentLinks = JSON.parse(JSON.stringify(nextLinks));
-              nextLinks.length = 0;
-            }
-          });
-      }
     }
   }
 
@@ -449,12 +395,26 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
     let currentAccount = rankScore.find((item) => item.id == msg.from.id);
     if (
       currentAccount &&
-      currentAccount.doneList.indexOf(msg.reply_to_message.message_id) === -1 &&
       msg.text.toLowerCase().indexOf("done all") !== -1 &&
       msg.reply_to_message.text.indexOf(
         `ae tương tác ủng hộ các bạn, xong hết nhớ reply "done all"`
       ) !== -1
     ) {
+      if (
+        currentAccount.doneList.indexOf(msg.reply_to_message.message_id) !== -1
+      ) {
+        bot.sendMessage(
+          chatId,
+          `Bạn ${currentAccount.firstName} ${
+            currentAccount.lastName ? currentAccount.lastName : ""
+          } đã done all bài này rồi, vui lòng tương tác bài khác!`,
+          {
+            disable_web_page_preview: true,
+            reply_to_message_id: msg.message_id,
+          }
+        );
+        return;
+      }
       if (!currentAccount.twitter) {
         bot.sendMessage(
           chatId,
@@ -588,7 +548,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
       msg.text.toLowerCase().indexOf("done2fl") !== -1 &&
       !currentAccount.is2Follow
     ) {
-      if(currentAccount.isFollow){
+      if (currentAccount.isFollow) {
         currentAccount.score += 15;
         currentAccount.is2Follow = true;
         currentAccount.isFollow = true;
@@ -598,7 +558,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
             "score updated. Current score: " +
             currentAccount.score
         );
-      }else{
+      } else {
         currentAccount.score += 30;
         currentAccount.is2Follow = true;
         currentAccount.isFollow = true;
@@ -609,7 +569,6 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
             currentAccount.score
         );
       }
-      
     } else if (
       msg.text.toLowerCase().indexOf("done2gr") !== -1 &&
       !currentAccount.isJoin
@@ -622,19 +581,25 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
           "score updated. Current score: " +
           currentAccount.score
       );
-    } else if (
-      msg.text.toLowerCase().indexOf("done5") !== -1 &&
-      currentAccount.done5List.indexOf(
-        msg.reply_to_message.text.split("\n")[0].split(" id: ")[1].trim()
-      ) === -1 &&
-      msg.reply_to_message.text.indexOf(
-        "5 Link này CHỈ DÀNH RIÊNG cho người gõ"
-      ) !== -1
-    ) {
-      let currentId = msg.reply_to_message.text
-        .split("\n")[0]
-        .split(" id: ")[1]
-        .trim();
+    } else if (msg.text.toLowerCase().indexOf("done5") !== -1) {
+      if (
+        currentAccount.done5List.indexOf(
+          linksObject.id
+        ) !== -1
+      ) {
+        bot.sendMessage(
+          chatId,
+          `Bạn ${currentAccount.firstName} ${
+            currentAccount.lastName ? currentAccount.lastName : ""
+          } đã done5 bài này rồi, vui lòng chờ 5 link mới để tương tác!
+          `,
+          {
+            disable_web_page_preview: true,
+            reply_to_message_id: msg.message_id,
+          }
+        );
+      }
+      let currentId = linksObject.id;
       if (!currentAccount.twitter) {
         bot.sendMessage(
           chatId,
@@ -653,9 +618,8 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
           .split("?")[0]
           .split("/")[3];
         let URLs = extractUrls(
-          full5LinksList
-            .find((item) => item.id == currentId)
-            .waitingList.join(" ")
+          linksObject
+            .currentList.join(" ")
         );
         console.log("URL IS: ", URLs);
 
@@ -712,7 +676,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
             msg.from.last_name ? msg.from.last_name : ""
           } là: ${varCount}/${URLs.length}, bạn được cộng ${parseInt(
             pointClaim
-          )} điểm. Check rank hiện tại: /rank.\nClick vào đây /link để nhận 5 link mới cải thiện rank. ${messageMissingPost}`,
+          )} điểm. Check rank hiện tại: /rank. ${messageMissingPost}`,
           {
             disable_web_page_preview: true,
             reply_to_message_id: msg.message_id,
@@ -726,6 +690,67 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
         );
 
         currentAccount.done5List.push(currentId);
+        if (varCount >= 1) {
+          linksObject.waitingList.push(currentAccount.id);
+          bot.sendMessage(
+            chatId,
+            `BONUS: Bạn ${msg.from.first_name} ${
+              msg.from.last_name ? msg.from.last_name : ""
+            } đủ điều kiện tham gia hàng chờ random 5 link được ghim tiếp theo!\nHIỆN TẠI ĐANG CÓ ${linksObject.waitingList.length} BẠN TRONG HÀNG CHỜ!`,
+            {
+              disable_web_page_preview: true,
+              reply_to_message_id: msg.message_id,
+            }
+          );
+          if (linksObject.waitingList.length >= 5) {
+            let newId = uuidv4();
+            let newLinks = [];
+            let pickedList = getRandomElementsFromArray(
+              linksObject.waitingList,
+              5
+            );
+            pickedList.forEach((userId) => {
+              let currentAccount = rankScore.find((item) => (item.id == userId));
+              let url = getUrlById(
+                currentAccount.twitter
+                  .split("?")[0]
+                  .split("/")[3]
+                  .toLowerCase(),
+                currentAccount.twitterIdStr
+              );
+              if (url) {
+                console.log(url)
+                newLinks.push(url);
+              }
+            });
+            linksObject = null;
+            linksObject = {
+              id: newId,
+              currentList: newLinks,
+              waitingList: [],
+            };
+            bot
+              .sendMessage(
+                chatId,
+                `LIST 5 LINK VỪA ĐƯỢC CẬP NHẬT
+ANH EM CÓ THỂ CLICK VÀO ĐÂY /link ĐỂ TƯƠNG TÁC NHẬN 20 POINT ĐỒNG THỜI ĐƯỢC VÀO HÀNG CHỜ NGẪU NHIÊN CHỌN 5/10 BẠN GHIM 5 LINK TIẾP THEO
+NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯỢC SỬ DỤNG LỆNH /RANDOM + <LINK POST> KHÔNG MẤT ĐIỂM KHI ĐÃ DONE5 TRƯỚC ĐÓ`,
+                {
+                  disable_web_page_preview: true,
+                }
+              )
+              .then((message) => {
+                // Use the message object to get the message ID and other details
+                console.log("Message sent:", message);
+
+                // Use the 'message_id' from the response to pin the message
+                bot.pinChatMessage(chatId, message.message_id);
+              })
+              .catch((error) => {
+                console.error("Error sending message:", error);
+              });
+          }
+        }
       }
     } else if (
       msg.text.toLowerCase().indexOf("done1follow") !== -1 &&
@@ -795,15 +820,18 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
     msg.text.toLowerCase().split("@")[0] === "/link"
   ) {
     // check 5 link moi nhat chua done theo id
-    let linkObj = full5LinksList.find(
-      (item) =>
-        crAccount.done5List.indexOf(item.id) === -1 &&
-        item.waitingList.length == 5
-    );
+    if (crAccount.done5List.indexOf(linksObject.id) !== -1) {
+      bot.sendMessage(
+        -1001851061739,
+        `Bạn đã done 5 link mới nhất rồi, vui lòng chờ 5 link mới reset!\nHiện tại đang có ${linksObject.waitingList.length} bạn trong hàng chờ!`,
+        { reply_to_message_id: msg.message_id }
+      );
+      return;
+    }
 
-    if (linkObj) {
-      let currentLinks = linkObj.waitingList;
-      let idLink = linkObj.id;
+    if (linksObject) {
+      let currentLinks = linksObject.currentList;
+      let idLink = linksObject.id;
       let linkMarkUp = currentLinks.map((item) => {
         return [
           { text: "@" + item.split(".com/")[1].split("/status")[0], url: item },
@@ -830,18 +858,15 @@ Dưới đây là ${currentLinks.length} link gần nhất được gửi trong 
       bot.sendMessage(
         -1001851061739,
         `MSG id: ${idLink}
-Done5 = 20 điểm
-5 Link này CHỈ DÀNH RIÊNG cho người gõ /link ( được bot reply). Ae khác vui lòng tự gõ lại để lấy 5 link của riêng mình!!!
-Dưới đây là ${currentLinks.length} link gần nhất mà bạn chưa tương tác. Tương tác xong reply "done5" để cộng điểm.`,
+ĐÂY LÀ 5 LINK MỚI NHẤT ĐỂ BẠN TƯƠNG TÁC:.
+- reply "done5" khi tương tác xong - 20 điểm
+- đảm bảo bạn đã hoàn thành bài ghim channel "done all" gần nhất
+- 10 bạn hoàn thành 5 link này và bài ghim gần nhất sẽ được vào HÀNG CHỜ NGẪU NHIÊN
+- 5 link này sẽ đổi khi đủ 10 bạn done5, VUI LÒNG TỰ GÕ /link để lấy link tương tác
+HIỆN TẠI ĐANG CÓ: ${linksObject.waitingList.length} BẠN TRONG HÀNG CHỜ`,
         messageOptions
       );
       // crAccount.done5List.push(idLink);
-    } else {
-      bot.sendMessage(
-        -1001851061739,
-        `Bạn đấm hết link rồi còn đâu mà check nữa, cày ác quá ác =)))`,
-        { reply_to_message_id: msg.message_id }
-      );
     }
   }
 
@@ -1090,7 +1115,7 @@ const filterLink = (doneList, currentList) => {
   });
   console.log("result: " + result);
 
-  let finalResult = result.sort((a, b) => b.score - a.score).slice(0, 12);
+  let finalResult = result.sort((a, b) => b.score - a.score).slice(0, 15);
   if (whiteList.length > 0) {
     let finalLink = result.map((item) => item.link);
     whiteList.forEach((item) => {
@@ -1103,7 +1128,7 @@ const filterLink = (doneList, currentList) => {
       }
     });
     whiteList.length = 0;
-    finalResult = finalResult.slice(0, 12);
+    finalResult = finalResult.slice(0, 15);
   }
   finalResult.forEach((item) => {
     doneList.push(item.id);
@@ -1229,6 +1254,7 @@ function extractUrls(text) {
 
 const writeScoreFunc = () => {
   fs.writeFileSync("./score.json", JSON.stringify(rankScore));
+  fs.writeFileSync("./linksObject.json", JSON.stringify(linksObject));
 };
 
 const write5linkFunc = () => {
@@ -1352,11 +1378,42 @@ const checkId = (username) => {
   return userInfo.id_str;
 };
 
+const checkBlue = (username) => {
+  const userInfoRaw = require("child_process")
+    .execSync(`twscrape user_by_login ${username}`)
+    .toString();
+  const userInfo = JSON.parse(userInfoRaw);
+  return userInfo.blue;
+};
+
 const check5link = (idsLink, currentMessage) => {
   let idFromMessage = currentMessage.split("\n")[0].split(" ")[1].trim();
   console.log(idFromMessage);
   return idsLink.indexOf(idFromMessage) === -1;
 };
+
+function getRandomElementsFromArray(array, x) {
+  const randomElements = [];
+
+  // Check if x is greater than the length of the array
+  if (x >= array.length) {
+    return array;
+  }
+
+  // Use a loop to generate x random indices
+  while (randomElements.length < x) {
+    const randomIndex = Math.floor(Math.random() * array.length);
+
+    // Check if the random index is not already in the randomElements array
+    if (randomElements.indexOf(randomIndex) === -1) {
+      randomElements.push(randomIndex);
+    }
+  }
+
+  // Get the elements at the random indices
+  const result = randomElements.map((index) => array[index]);
+  return result;
+}
 
 const checkVar = (urls, username, twitterIdStr) => {
   try {
@@ -1397,6 +1454,35 @@ const checkVar = (urls, username, twitterIdStr) => {
     return { count, missingPosts };
   } catch (error) {
     console.log(error.message);
+    return null;
+  }
+};
+
+const getUrlById = (username, twitterIdStr) => {
+  try {
+    console.log("Getting lastest post for: " + username);
+
+    const missingPosts = [];
+
+    let path = `./users1/${username}.txt`;
+    const result = require("child_process")
+      .execSync(`python3 scrape1.py ${twitterIdStr} ${username} ${path} 20`)
+      .toString();
+
+    const dataRaw = fs.readFileSync(path, { encoding: "utf-8" });
+    const finalData = dataRaw
+      .split("\n")
+      .filter((item) => item)
+      .map((item) => JSON.parse(item))
+      .filter(
+        (item) =>
+          !item.retweetedTweet &&
+          item.rawContent.indexOf("RT @") === -1 &&
+          item.url.toLowerCase().indexOf(username.toLowerCase()) !== -1
+      )
+      .map((item) => item.url);
+    return finalData[0];
+  } catch (error) {
     return null;
   }
 };

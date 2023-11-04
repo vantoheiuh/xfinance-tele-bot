@@ -1,73 +1,161 @@
 {
-    "id": 1709540083047776665,
-    "id_str": "1709540083047776665",
-    "url": "https://twitter.com/nhLChu2/status/1709540083047776665",
-    "date": "2023-10-04 12:04:52+00:00",
+    "id": 1720246433608306986,
+    "id_str": "1720246433608306986",
+    "url": "https://twitter.com/HiddenGems_X/status/1720246433608306986",
+    "date": "2023-11-03 01:08:05+00:00",
     "user": {
-        "id": 1520270644906127360,
-        "id_str": "1520270644906127360",
-        "url": "https://twitter.com/nhLChu2",
-        "username": "nhLChu2",
-        "displayname": "Jack Lee | X NetworkVN",
-        "rawDescription": "PROMOTING CRYPTOCURRENCY #CryptocurrencyNews\n#Hidengem - #IDO - #Airdrop #Defi #Web3  #Crypto #Airdrop #Bitcoin #ETH #BBANK #ICE #FMC",
-        "created": "2022-04-30 05:15:58+00:00",
-        "followersCount": 2591,
-        "friendsCount": 4835,
-        "statusesCount": 6141,
-        "favouritesCount": 5954,
+        "id": 284961232,
+        "id_str": "284961232",
+        "url": "https://twitter.com/HiddenGems_X",
+        "username": "HiddenGems_X",
+        "displayname": "Hidden Gems | X FINANCE",
+        "rawDescription": "- N\u01a1i t\u1ed5ng h\u1ee3p h\u01b0\u1edbng d\u1eabn l\u00e0m airdrop + retro c\u1ee7a bi\u1ec7t \u0111\u1ed9i admin airdrop #XFINANCE\n- Tham gia: https://t.co/HLUBV8ZX5Q \u0111\u1ec3 c\u1eadp nh\u1eadt th\u00f4ng tin nhanh nh\u1ea5t.",
+        "created": "2011-04-20 08:34:13+00:00",
+        "followersCount": 1207,
+        "friendsCount": 591,
+        "statusesCount": 908,
+        "favouritesCount": 1251,
         "listedCount": 4,
-        "mediaCount": 246,
-        "location": "HA NOI CITY, VIET NAM",
-        "profileImageUrl": "https://pbs.twimg.com/profile_images/1693082278094868480/7fyKenrd_normal.jpg",
-        "profileBannerUrl": "https://pbs.twimg.com/profile_banners/1520270644906127360/1692497247",
+        "mediaCount": 22,
+        "location": "",
+        "profileImageUrl": "https://pbs.twimg.com/profile_images/1708855217494904832/gJ4X8J8y_normal.jpg",
+        "profileBannerUrl": "https://pbs.twimg.com/profile_banners/284961232/1696257812",
         "protected": null,
         "verified": false,
         "blue": true,
         "blueType": null,
         "descriptionLinks": [
             {
-                "url": "https://cos.tv/v2/personal-center/dashboard",
-                "text": "cos.tv/v2/personal-ce\u2026",
-                "tcourl": "https://t.co/O8PGo50Gzl"
+                "url": "http://t.me/hiddengemsx",
+                "text": "t.me/hiddengemsx",
+                "tcourl": "https://t.co/HLUBV8ZX5Q"
             }
         ],
         "_type": "snscrape.modules.twitter.User"
     },
     "lang": "vi",
-    "rawContent": "@xfinancevn_news H\u00f4m nay c\u00f3 ai tr\u00fang xs ko nh\u1ec9?",
-    "replyCount": 1,
-    "retweetCount": 0,
-    "likeCount": 1,
+    "rawContent": "K\u00c8O AIRDROP MINE WARZ \u0110\u00c0O V\u00c0NG \u0110\u1ec2 \u0110\u1ed4I TOKEN MZ\n\nMINE WARZ l\u00e0 m\u1ed9t tr\u00f2 ch\u01a1i \u00f4ng tr\u00f9m khai th\u00e1c m\u1ecf \u0111\u01a1n gi\u1ea3n, \u0111\u01b0\u1ee3c tinh ch\u1ec9nh \u0111\u1ebfn b\u1ea3n ch\u1ea5t c\u1ed1t l\u00f5i b\u1eb1ng c\u00e1ch lo\u1ea1i b\u1ecf nh\u1eefng kh\u00eda c\u1ea1nh kh\u00f4ng c\u1ea7n thi\u1ebft.\n\nPRE-MINING l\u00e0 m\u1ed9t s\u1ef1 ki\u1ec7n \u0111\u01b0\u1ee3c chu\u1ea9n b\u1ecb nh\u1eb1m ch\u00e0o \u0111\u00f3n s\u1ef1 ra m\u1eaft ch\u00ednh th\u1ee9c c\u1ee7a MINE WARZ. Th\u00f4ng qua KHAI TH\u00c1C TR\u01af\u1edaC, ng\u01b0\u1eddi tham gia c\u00f3 th\u1ec3 khai th\u00e1c B\u1ea1c v\u00e0 c\u00f3 th\u1ec3 chuy\u1ec3n \u0111\u1ed5i th\u00e0nh ti\u1ec1n trong tr\u00f2 ch\u01a1i sau khi ra m\u1eaft ch\u00ednh th\u1ee9c\n\nNHI\u1ec6M V\u1ee4 CHI TI\u1ebeT \ud83d\udc47\ud83d\udc47",
+    "replyCount": 75,
+    "retweetCount": 1,
+    "likeCount": 70,
     "quoteCount": 0,
-    "conversationId": 1709400296596943070,
+    "conversationId": 1720246433608306986,
     "hashtags": [],
     "cashtags": [],
-    "mentionedUsers": [
-        {
-            "id": 1294615357504630784,
-            "username": "xfinancevn_news",
-            "displayname": "X FINANCE NEWS",
-            "_type": "snscrape.modules.twitter.UserRef"
-        }
-    ],
+    "mentionedUsers": [],
     "links": [],
-    "viewCount": 25,
+    "viewCount": 1362,
     "retweetedTweet": null,
-    "quotedTweet": null,
+    "quotedTweet": {
+        "id": 1719680578625392827,
+        "id_str": "1719680578625392827",
+        "url": "https://twitter.com/Thane_XFinance/status/1719680578625392827",
+        "date": "2023-11-01 11:39:34+00:00",
+        "user": {
+            "id": 1292443841342054400,
+            "id_str": "1292443841342054400",
+            "url": "https://twitter.com/Thane_XFinance",
+            "username": "Thane_XFinance",
+            "displayname": "THANE |X FINANCE",
+            "rawDescription": "Continuously update the cryptocurrency market, guide Airdrop retroactive Testnest Blockchain,Daap,Web 3, Social Fi,Game Fi, DEX AMM Join https://t.co/a0NEbQXTgP",
+            "created": "2020-08-09 12:53:34+00:00",
+            "followersCount": 2499,
+            "friendsCount": 2440,
+            "statusesCount": 7049,
+            "favouritesCount": 8186,
+            "listedCount": 10,
+            "mediaCount": 451,
+            "location": "",
+            "profileImageUrl": "https://pbs.twimg.com/profile_images/1707973372729319424/IkH956Ta_normal.jpg",
+            "profileBannerUrl": "https://pbs.twimg.com/profile_banners/1292443841342054400/1696047559",
+            "protected": null,
+            "verified": false,
+            "blue": true,
+            "blueType": null,
+            "descriptionLinks": [
+                {
+                    "url": "https://t.me/hiddengems",
+                    "text": "t.me/hiddengems",
+                    "tcourl": "https://t.co/a0NEbQXTgP"
+                }
+            ],
+            "_type": "snscrape.modules.twitter.User"
+        },
+        "lang": "vi",
+        "rawContent": "GAME FI \u0110ANG TR\u00caN CON \u0110\u01af\u1edcNG TR\u1ede L\u1ea0I\n\nHello ae , l\u1ea1i l\u00e0 THANE \u0111\u1ebfn t\u1eeb XFINANCE \u0111\u00e2y. \u0110\u1ec3 kh\u00f4ng b\u1ecf l\u1ee1 nh\u1eefng k\u00e8o air ng\u00e0n \u0111\u00f4 ae tham gia tai \u0111\u00e2y nh\u00e9 : https://t.co/em5soAz7PK\n\nTrong giai \u0111o\u1ea1n n\u00e0y m\u1ecdi ng\u01b0\u1eddi c\u0169ng c\u00f3 th\u1ec3 c\u1ea3m \u0111\u01b0\u1ee3c trend GAMEFI \u0111ang tr\u1edf l\u1ea1i v\u00e0 tr\u1edf l\u1ea1i r\u1ea5t m\u1ea1nh m\u1ebd , nhi\u1ec1u d\u1ef1 \u00e1n \u0111\u00e3 g\u1ecdi \u0111\u01b0\u01a1c v\u1ed1n \u0111\u1ea7u t\u01b0 kh\u1ee7ng ngay t\u1eeb v\u00f2ng seed v\u00e0 \u0111\u00e3 pump r\u1ea5t m\u1ea1nh m\u1ebd \u0111i\u1ec3n h\u00ecnh con Bigtime.\n\nS\u1ebd kh\u00f4ng l\u00e2u n\u1eefa \u0111\u00e2u nh\u1eefng k\u00e8o air s\u1ebd l\u00e0m cho ch\u00fang ta thay \u0111\u1ed5i v\u1ecb th\u1ebf\n\nK\u00c8O AIRDROP MINE WARZ \u0110\u00c0O V\u00c0NG \u0110\u1ec2 \u0110\u1ed4I TOKEN MZ\n\nMINE WARZ l\u00e0 m\u1ed9t tr\u00f2 ch\u01a1i \u00f4ng tr\u00f9m khai th\u00e1c m\u1ecf \u0111\u01a1n gi\u1ea3n, \u0111\u01b0\u1ee3c tinh ch\u1ec9nh \u0111\u1ebfn b\u1ea3n ch\u1ea5t c\u1ed1t l\u00f5i b\u1eb1ng c\u00e1ch lo\u1ea1i b\u1ecf nh\u1eefng kh\u00eda c\u1ea1nh kh\u00f4ng c\u1ea7n thi\u1ebft.\n\nB\u1ea1n s\u1ebd c\u00f3 c\u01a1 h\u1ed9i kh\u00e1m ph\u00e1 th\u1ebf gi\u1edbi MINE WARZ, n\u01a1i b\u1ea1n c\u00f3 th\u1ec3 tr\u1ea3i nghi\u1ec7m s\u1ef1 t\u00edch l\u0169y c\u1ee7a c\u1ea3i b\u1eb1ng c\u00e1ch ti\u00ean phong khai th\u00e1c m\u1ecf, khai th\u00e1c t\u00e0i nguy\u00ean v\u00e0 tham gia v\u00e0o c\u00e1c cu\u1ed9c thi t\u00e0i nguy\u00ean, t\u1ea5t c\u1ea3 \u0111\u1ec1u th\u00f4ng qua nhi\u1ec1u lo\u1ea1i NFT PFP (\u1ea2nh h\u1ed3 s\u01a1).\n\nPRE-MINING l\u00e0 m\u1ed9t s\u1ef1 ki\u1ec7n \u0111\u01b0\u1ee3c chu\u1ea9n b\u1ecb nh\u1eb1m ch\u00e0o \u0111\u00f3n s\u1ef1 ra m\u1eaft ch\u00ednh th\u1ee9c c\u1ee7a MINE WARZ. Th\u00f4ng qua KHAI TH\u00c1C TR\u01af\u1edaC, ng\u01b0\u1eddi tham gia c\u00f3 th\u1ec3 khai th\u00e1c B\u1ea1c v\u00e0 c\u00f3 th\u1ec3 chuy\u1ec3n \u0111\u1ed5i th\u00e0nh ti\u1ec1n trong tr\u00f2 ch\u01a1i sau khi ra m\u1eaft ch\u00ednh th\u1ee9c.\n\nNHI\u1ec6M V\u1ee4 CHI TI\u1ebeT\n\nB1. Truy c\u1eadp v\u00e0o link\n https://t.co/U3zS7rzuOL\nsau \u0111\u00f3 Login b\u1eb1ng Google.\n Nh\u1eadp user name v\u00e0 Invite code: ThaneXFinance\n\nB2. Ti\u1ebfn h\u00e0nh \u0111\u00e0o v\u00e0ng\n\na. Ae nh\u1ea5n v\u00e0o TAP \u0111\u1ee7 30 l\u1ea7n\n\nb. Sau \u0111\u00f3 clamp reward\n\nc. M\u1ed7i ng\u00e0y v\u00e0o Click \u0111\u1ec3 \u0111\u00e0o l\u1ea5y Silver , ae c\u0169ng c\u00f3 th\u1ec3 m\u1eddi b\u1ea1n b\u00e8 \u0111\u1ec3 th\u00eam point.\n\nB3. Truy c\u1eadp v\u00e0o Link https://t.co/inMBbY61ki Ho\u00e0n th\u00e0nh nhi\u1ec7m v\u1ee5 c\u01a1 b\u1ea3n tr\u00ean Galxe\n\nCon n\u00e0y c\u00f3 kh\u1ea3 n\u0103ng airdrop r\u1ea5t cao ae b\u1ecf th\u1eddi gian ra l\u00e0m kh\u00f4ng m\u1ea5t g\u00ec\n\nBi\u1ebft \u0111\u00e2u \u0111\u01b0\u1ee3c nh\u1eefng k\u00e8o free nh\u01b0 th\u1ebf n\u00e0y l\u1ea1i l\u00e0 k\u00e8o cho ae thay \u0111\u1ed5i v\u1ecb th\u1ebf th\u00ec sao\n\nTh\u1ecb tr\u01b0\u1eddng \u0111ang v\u00e0o s\u00f3ng MEME coin v\u00e0 Game Fi n\u00ean ae c\u1ee9 tranh th\u1ee7 k\u00e8o free c\u1ee9 l\u00e0m th\u00f4i.\n\n#Airdrop #Crypto",
+        "replyCount": 157,
+        "retweetCount": 3,
+        "likeCount": 156,
+        "quoteCount": 1,
+        "conversationId": 1719680578625392827,
+        "hashtags": [],
+        "cashtags": [],
+        "mentionedUsers": [],
+        "links": [
+            {
+                "url": "https://t.me/hiddengemsx",
+                "text": "t.me/hiddengemsx",
+                "tcourl": "https://t.co/GFmJujzx2e"
+            },
+            {
+                "url": "https://t.me/hiddengemsx",
+                "text": "t.me/hiddengemsx",
+                "tcourl": "https://t.co/em5soAz7PK"
+            },
+            {
+                "url": "https://pre-mining.minewarz.io",
+                "text": "pre-mining.minewarz.io",
+                "tcourl": "https://t.co/U3zS7rzuOL"
+            },
+            {
+                "url": "https://galxe.com/MINEWARZ\u0111\u1ec3",
+                "text": "galxe.com/MINEWARZ\u0111\u1ec3",
+                "tcourl": "https://t.co/inMBbY61ki"
+            }
+        ],
+        "viewCount": 3465,
+        "retweetedTweet": null,
+        "quotedTweet": null,
+        "place": null,
+        "coordinates": null,
+        "inReplyToTweetId": null,
+        "inReplyToUser": null,
+        "source": "<a href=\"https://mobile.twitter.com\" rel=\"nofollow\">Twitter Web App</a>",
+        "sourceUrl": "https://mobile.twitter.com",
+        "sourceLabel": "Twitter Web App",
+        "media": {
+            "photos": [
+                {
+                    "url": "https://pbs.twimg.com/media/F92HjtHboAAaVvX.png"
+                },
+                {
+                    "url": "https://pbs.twimg.com/media/F92HmEiakAAvbXN.jpg"
+                },
+                {
+                    "url": "https://pbs.twimg.com/media/F92HnCgbQAAEGO2.png"
+                },
+                {
+                    "url": "https://pbs.twimg.com/media/F92Hn84a8AAdMv0.jpg"
+                }
+            ],
+            "videos": [],
+            "animated": []
+        },
+        "_type": "snscrape.modules.twitter.Tweet"
+    },
     "place": null,
     "coordinates": null,
-    "inReplyToTweetId": 1709400296596943070,
-    "inReplyToUser": {
-        "id": 1294615357504630784,
-        "username": "xfinancevn_news",
-        "displayname": "X FINANCE NEWS",
-        "_type": "snscrape.modules.twitter.UserRef"
-    },
+    "inReplyToTweetId": null,
+    "inReplyToUser": null,
     "source": "<a href=\"https://mobile.twitter.com\" rel=\"nofollow\">Twitter Web App</a>",
     "sourceUrl": "https://mobile.twitter.com",
     "sourceLabel": "Twitter Web App",
     "media": {
-        "photos": [],
+        "photos": [
+            {
+                "url": "https://pbs.twimg.com/media/F9-K8gybkAADJ4z.png"
+            }
+        ],
         "videos": [],
         "animated": []
     },

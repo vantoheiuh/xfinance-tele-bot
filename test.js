@@ -109,43 +109,33 @@ let ghimLinkFinal =
   Thank you all`);
 
 
-const checkVar = (urls, username, twitterIdStr) => {
+const getUrlById = (username, twitterIdStr) => {
   try {
-    console.log("Đang check var: " + username);
+  console.log("Getting lastest post for: " + username)
 
   const missingPosts = [];
 
-  let path = `./users/${username}${urls.length}.txt`;
-  const idURLs = urls.map((item) => item.split("status/")[1].split("?")[0]);
+  let path = `./users1/${username}.txt`;
   const result = require("child_process")
     .execSync(
-      `python3 scrape.py ${twitterIdStr} ${username} ${path} ${
-        urls.length === 5 ? 20 : 120
-      }`
+      `python3 scrape1.py ${twitterIdStr} ${username} ${path} 20`
     )
     .toString();
 
   const dataRaw = fs.readFileSync(path, { encoding: "utf-8" });
   const finalData = dataRaw
     .split("\n")
-    .filter((item) => item)
-    .map((item) => JSON.parse(item).id_str);
-  let count = 0;
-  idURLs.forEach((id) => {
-    if (finalData.indexOf(id) != -1) {
-      count += 1;
-    } else {
-      missingPosts.push(urls.find((item) => item.indexOf(id) !== -1));
-    }
-  });
-  console.log(`Tổng tương tác của ${username}: ${count}/${idURLs.length}`);
-  return { count, missingPosts };
+    .filter(item => item)
+    .map(item => JSON.parse(item))
+    .filter((item) => !item.retweetedTweet && item.rawContent.indexOf("RT @") === -1 && item.url.toLowerCase().indexOf(username.toLowerCase()) !== -1)
+    .map(item => item.url)
+  return finalData[0];
   } catch (error) {
     return null;
   }
   
 };
 
-const a = checkVar(urls, "yukichan2k2", "1696663936677085184");
+const a = getUrlById("HiddenGems_X", "284961232");
 
 console.log(a);

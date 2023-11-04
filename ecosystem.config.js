@@ -1,7 +1,7 @@
 module.exports = {
     apps: [
       {
-        name: 'xfinance-bot', // Đặt tên cho ứng dụng của bạn
+        name: 'x-bot', // Đặt tên cho ứng dụng của bạn
         script: './telebot.js', // Đường dẫn đến file chính của ứng dụng
         instances: 1,
         autorestart: false,
