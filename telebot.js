@@ -10,7 +10,7 @@ let groupId = -1001957652310; // channelId
 const rankScore = require("./score.json");
 
 const full5LinksList = require("./full5links.json");
-const linksObject = require("./linksObject.json");
+let linksObject = require("./linksObject.json");
 
 const waitingList = [];
 
@@ -690,7 +690,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
         );
 
         currentAccount.done5List.push(currentId);
-        if (varCount >= 1) {
+        if (varCount >= 4) {
           linksObject.waitingList.push(currentAccount.id);
           bot.sendMessage(
             chatId,
@@ -702,7 +702,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
               reply_to_message_id: msg.message_id,
             }
           );
-          if (linksObject.waitingList.length >= 5) {
+          if (linksObject.waitingList.length >= 10) {
             let newId = uuidv4();
             let newLinks = [];
             let pickedList = getRandomElementsFromArray(
