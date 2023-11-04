@@ -6,7 +6,7 @@ const repositoryPath = '/path/to/your/repo';
 const commitMessage = 'Automated commit';
 
 // Define the Git commands
-const gitAdd = `git add score.json telebot.js`;
+const gitAdd = `git add score.json telebot.js linksObject.json`;
 const gitCommit = `git  commit -m "${commitMessage}"`;
 const gitPush = `git push`;
 

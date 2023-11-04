@@ -1432,7 +1432,7 @@ const checkVar = (urls, username, twitterIdStr) => {
     const result = require("child_process")
       .execSync(
         `python3 scrape.py ${twitterIdStr} ${username} ${path} ${
-          urls.length === 5 ? 20 : 50
+          urls.length === 5 ? 20 : 120
         }`
       )
       .toString();
