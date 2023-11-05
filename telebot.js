@@ -246,24 +246,28 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
   }
 
   if (
-    currentAccount.twitter &&
-    currentAccount.twitter.split("?")[0].split("/")[3].toLowerCase() !=
+    crAccount.twitter &&
+     containsLink(msg.text) &&
+    crAccount.twitter.split("?")[0].split("/")[3].toLowerCase() !=
       extractUrls(msg.text)[0].split("?")[0].split("/")[3].toLowerCase()
-      && containsLink(msg.text)
   ) {
-    bot.deleteMessage(chatId, msg.message_id);
+    
     bot.sendMessage(
       chatId,
-      `Link X định danh với tele của bạn ${currentAccount.firstName} ${
-        currentAccount.lastName ? currentAccount.lastName : ""
+      `Link X định danh với tele của bạn ${crAccount.firstName} ${
+        crAccount.lastName ? crAccount.lastName : ""
       } là ${
-        currentAccount.twitter.split("?")[0].split("/status")[0]
+        crAccount.twitter.split("?")[0].split("/status")[0]
       }. Vui lòng gửi đúng link X để được lên ghim tương tác!`,
       {
         disable_web_page_preview: true,
         reply_to_message_id: msg.message_id,
       }
-    );
+    ).then(sentMessage => {
+      setTimeout(() => {
+        bot.deleteMessage(chatId, msg.message_id);
+      }, 10000); // 15 phút
+    });
     return;
   }
 
