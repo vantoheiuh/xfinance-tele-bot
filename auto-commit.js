@@ -11,7 +11,7 @@ const gitCommit = `git  commit -m "${commitMessage}"`;
 const gitPush = `git push`;
 
 // Schedule the Git commands to run every 5 minutes
-cron.schedule('*/1 * * * *', () => {
+cron.schedule('*/10 * * * *', () => {
   // Run 'git add', 'git commit', and 'git push' commands in sequence
   exec(gitAdd, (error, stdout, stderr) => {
     if (error) {

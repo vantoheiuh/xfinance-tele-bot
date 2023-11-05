@@ -7,7 +7,7 @@ const fs = require("fs");
 
 let groupId = -1001957652310; // channelId
 
-const rankScore = require("./score.json");
+let rankScore = require("./score.json");
 
 const full5LinksList = require("./full5links.json");
 let linksObject = require("./linksObject.json");
@@ -24,6 +24,8 @@ let currentLinks = [];
 let nextLinks = [];
 let message5link = "";
 let markup5link;
+
+let RANDOM_GHIM_LIST = [];
 
 // console.log(rankScore);
 
@@ -66,6 +68,19 @@ bot.on("message", async (msg) => {
   console.log(msg);
 
   let crAccount = rankScore.find((item) => item.id == msg.from.id);
+  if (crAccount && crAccount.banned) {
+    bot.sendMessage(
+      chatId,
+      `Bạn ${crAccount.firstName} ${
+        crAccount.lastName ? crAccount.lastName : ""
+      } đã bị khoá tài khoản vì sử dụng nhiều telegram chung 1 twitter!`,
+      {
+        disable_web_page_preview: true,
+        reply_to_message_id: msg.message_id,
+      }
+    );
+    return;
+  }
   if (crAccount && !crAccount.firstName) {
     crAccount.firstName = msg.from.first_name;
     crAccount.lastName = msg.from.last_name;
@@ -118,7 +133,10 @@ bot.on("message", async (msg) => {
   //CHECK VAR DONE ALL
 
   // CHECK TWITTER
-  if (msg.text.toLowerCase() === "/twitter") {
+  if (
+    msg.text.toLowerCase() === "/twitter" ||
+    msg.text.split("@")[0].toLowerCase() === "/twitter"
+  ) {
     if (crAccount.twitter) {
       bot.sendMessage(
         chatId,
@@ -151,10 +169,11 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
     //   .split("/")[3]
     //   .toLowerCase();
     // if (crAccount.twitter) {
-    if (false) {
+    if (crAccount.twitter) {
       bot.sendMessage(
         chatId,
-        `Twitter @${currentTwitterName} đã có trong hệ thống, không được phép dùng twitter này!`
+        `Cập nhật không thành công, bạn đã có twitter rồi, gõ /twitter để check!`,
+        { reply_to_message_id: msg.message_id }
       );
     } else {
       crAccount.twitter = msg.text.toLowerCase().split(" ")[1];
@@ -173,6 +192,8 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
   if (
     (msg.from.username == "xfinancevn" ||
       msg.from.id == 1087968824 ||
+      msg.from.id == 1906477815 ||
+      msg.from.id == 878380005 ||
       msg.from.id == 5873879220 ||
       msg.from.id == 1087968824 ||
       msg.from.id == 1212092150) &&
@@ -191,6 +212,8 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
     (msg.from.username == "xfinancevn" ||
       msg.from.id == 1087968824 ||
       msg.from.id == 5873879220 ||
+      msg.from.id == 878380005 ||
+      msg.from.id == 1906477815 ||
       msg.from.id == 1087968824 ||
       msg.from.id == 1212092150) &&
     msg.text.indexOf("/push") !== -1
@@ -207,6 +230,8 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
     (msg.from.username == "xfinancevn" ||
       msg.from.id == 1087968824 ||
       msg.from.id == 5873879220 ||
+      msg.from.id == 878380005 ||
+      msg.from.id == 1906477815 ||
       msg.from.ud == 1212092150) &&
     msg.text.toLowerCase() === "/clear"
   ) {
@@ -225,13 +250,14 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
     isWork &&
     msg.reply_to_message &&
     msg.reply_to_message.text.indexOf(currentId) !== -1 &&
-    (msg.text.split(" ")[0].indexOf("x.com") !== -1 ||
-      msg.text.split(" ")[0].indexOf("twitter.com") !== -1) &&
+    extractUrls(msg.text).length > 0 &&
+    extractUrls(msg.text)[0].indexOf("/status/") !== -1 &&
     currentTaskList.map((item) => item.id).indexOf(msg.from.id) === -1 &&
     currentTaskList
       .map((item) => item.twitterName)
-      .indexOf(msg.text.split(" ")[0].split("/")[3]) === -1
+      .indexOf(extractUrls(msg.text)[0].split("?")[0].split("/")[3]) === -1
   ) {
+    let currentAccount = rankScore.find((item) => item.id == msg.from.id);
     if (
       containsLink(msg.text) &&
       msg.from.id != 777000 &&
@@ -239,7 +265,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
     ) {
       // Nếu có liên kết, bạn có thể thực hiện một số hành động ở đây, ví dụ:
       // Gửi tin nhắn cảnh báo hoặc xóa tin nhắn.
-      let currentAccount = rankScore.find((item) => item.id == msg.from.id);
+
       let listIds = rankScore.map((item) => item.id);
       // console.log(currentAccount);
       // console.log(listIds.indexOf(msg.from.id) === -1);
@@ -259,14 +285,43 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
             " không đủ điểm tối thiểu để gửi liên kết trong nhóm này, vui lòng tương tác các bài ghim trước khi gửi link.\nHướng dẫn: https://t.me/xfinancevietnam/593",
           { disable_web_page_preview: true }
         );
+        return;
       }
     }
-    currentTaskList.push({
-      username: msg.from.username,
-      link: msg.text.split(" ")[0].split("?")[0],
-      id: msg.from.id,
-      twitterName: msg.text.split(" ")[0].split("/")[3],
-    });
+    if (isWork) {
+      if (
+        currentAccount.twitter &&
+        currentAccount.twitter.split("?")[0].split("/")[3].toLowerCase() ==
+          extractUrls(msg.text)[0].split("?")[0].split("/")[3].toLowerCase()
+      ) {
+        currentTaskList.push({
+          username: msg.from.username,
+          link: extractUrls(msg.text)[0].split("?")[0],
+          id: msg.from.id,
+          twitterName: extractUrls(msg.text)[0].split("?")[0].split("/")[3],
+          random: msg.text.indexOf("/random") !== -1 ? true : false,
+        });
+
+        console.log(currentTaskList.length);
+
+        if (msg.text.indexOf("/random") !== -1) {
+          currentAccount.score -= 20;
+        }
+      } else {
+        bot.sendMessage(
+          chatId,
+          `Link X định danh với tele của bạn ${currentAccount.firstName} ${
+            currentAccount.lastName ? currentAccount.lastName : ""
+          } là ${
+            currentAccount.twitter.split("?")[0].split("/status")[0]
+          }. Vui lòng gửi đúng link X để được lên ghim tương tác!`,
+          {
+            disable_web_page_preview: true,
+            reply_to_message_id: msg.message_id,
+          }
+        );
+      }
+    }
   } else {
     // console.log(msg)
     if (
@@ -582,11 +637,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
           currentAccount.score
       );
     } else if (msg.text.toLowerCase().indexOf("done5") !== -1) {
-      if (
-        currentAccount.done5List.indexOf(
-          linksObject.id
-        ) !== -1
-      ) {
+      if (currentAccount.done5List.indexOf(linksObject.id) !== -1) {
         bot.sendMessage(
           chatId,
           `Bạn ${currentAccount.firstName} ${
@@ -598,6 +649,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
             reply_to_message_id: msg.message_id,
           }
         );
+        return;
       }
       let currentId = linksObject.id;
       if (!currentAccount.twitter) {
@@ -617,10 +669,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
         let twitterUsername = currentAccount.twitter
           .split("?")[0]
           .split("/")[3];
-        let URLs = extractUrls(
-          linksObject
-            .currentList.join(" ")
-        );
+        let URLs = extractUrls(linksObject.currentList.join(" "));
         console.log("URL IS: ", URLs);
 
         if (!currentAccount.twitterIdStr) {
@@ -696,7 +745,9 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
             chatId,
             `BONUS: Bạn ${msg.from.first_name} ${
               msg.from.last_name ? msg.from.last_name : ""
-            } đủ điều kiện tham gia hàng chờ random 5 link được ghim tiếp theo!\nHIỆN TẠI ĐANG CÓ ${linksObject.waitingList.length} BẠN TRONG HÀNG CHỜ!`,
+            } đủ điều kiện tham gia hàng chờ random 5 link được ghim tiếp theo!\nHIỆN TẠI ĐANG CÓ ${
+              linksObject.waitingList.length
+            } BẠN TRONG HÀNG CHỜ!`,
             {
               disable_web_page_preview: true,
               reply_to_message_id: msg.message_id,
@@ -710,7 +761,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
               5
             );
             pickedList.forEach((userId) => {
-              let currentAccount = rankScore.find((item) => (item.id == userId));
+              let currentAccount = rankScore.find((item) => item.id == userId);
               let url = getUrlById(
                 currentAccount.twitter
                   .split("?")[0]
@@ -719,7 +770,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
                 currentAccount.twitterIdStr
               );
               if (url) {
-                console.log(url)
+                console.log(url);
                 newLinks.push(url);
               }
             });
@@ -820,14 +871,14 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
     msg.text.toLowerCase().split("@")[0] === "/link"
   ) {
     // check 5 link moi nhat chua done theo id
-    if (crAccount.done5List.indexOf(linksObject.id) !== -1) {
-      bot.sendMessage(
-        -1001851061739,
-        `Bạn đã done 5 link mới nhất rồi, vui lòng chờ 5 link mới reset!\nHiện tại đang có ${linksObject.waitingList.length} bạn trong hàng chờ!`,
-        { reply_to_message_id: msg.message_id }
-      );
-      return;
-    }
+    // if (crAccount.done5List.indexOf(linksObject.id) !== -1) {
+    //   bot.sendMessage(
+    //     -1001851061739,
+    //     `Bạn đã done 5 link mới nhất rồi, vui lòng chờ 5 link mới reset!\nHiện tại đang có ${linksObject.waitingList.length} bạn trong hàng chờ!`,
+    //     { reply_to_message_id: msg.message_id }
+    //   );
+    //   return;
+    // }
 
     if (linksObject) {
       let currentLinks = linksObject.currentList;
@@ -859,10 +910,10 @@ Dưới đây là ${currentLinks.length} link gần nhất được gửi trong 
         -1001851061739,
         `MSG id: ${idLink}
 ĐÂY LÀ 5 LINK MỚI NHẤT ĐỂ BẠN TƯƠNG TÁC:.
-- reply "done5" khi tương tác xong - 20 điểm
+- reply "done5" khi tương tác xong + 20 điểm
 - đảm bảo bạn đã hoàn thành bài ghim channel "done all" gần nhất
 - 10 bạn hoàn thành 5 link này và bài ghim gần nhất sẽ được vào HÀNG CHỜ NGẪU NHIÊN
-- 5 link này sẽ đổi khi đủ 10 bạn done5, VUI LÒNG TỰ GÕ /link để lấy link tương tác
+- 5 link này sẽ đổi khi đủ 10 bạn done5
 HIỆN TẠI ĐANG CÓ: ${linksObject.waitingList.length} BẠN TRONG HÀNG CHỜ`,
         messageOptions
       );
@@ -1103,6 +1154,7 @@ const filterLink = (doneList, currentList) => {
         id: item.id,
         link: item.link,
         score: currentAccount ? currentAccount.score : 0,
+        random: item.random,
       });
     } else {
       let currentAccount = rankScore.find((item1) => item.id == item1.id);
@@ -1110,12 +1162,22 @@ const filterLink = (doneList, currentList) => {
         id: item.id,
         link: item.link,
         score: currentAccount ? currentAccount.score : 0,
+        random: item.random,
       });
     }
   });
   console.log("result: " + result);
 
   let finalResult = result.sort((a, b) => b.score - a.score).slice(0, 15);
+  RANDOM_GHIM_LIST = null;
+  RANDOM_GHIM_LIST = getRandomElementsFromArray(
+    result
+      .sort((a, b) => b.score - a.score)
+      .slice(15)
+      .filter((item) => item.random),
+    3
+  );
+
   if (whiteList.length > 0) {
     let finalLink = result.map((item) => item.link);
     whiteList.forEach((item) => {
@@ -1136,6 +1198,12 @@ const filterLink = (doneList, currentList) => {
       doneList.push(item.link.split("/status")[0].split("com/")[1]);
     }
   });
+  RANDOM_GHIM_LIST.forEach((item) => {
+    doneList.push(item.id);
+    if (item.score != 999999) {
+      doneList.push(item.link.split("/status")[0].split("com/")[1]);
+    }
+  });
   console.log(doneList);
   finalResult.forEach((item) => {
     let currentAccount = rankScore.find((item1) => item1.id == item.id);
@@ -1143,12 +1211,24 @@ const filterLink = (doneList, currentList) => {
       currentAccount.score = currentAccount.score / 3;
     }
   });
+  RANDOM_GHIM_LIST.forEach((item) => {
+    let currentAccount = rankScore.find((item1) => item1.id == item.id);
+    if (currentAccount) {
+      currentAccount.score = currentAccount.score / 3;
+    }
+  });
+  RANDOM_GHIM_LIST = RANDOM_GHIM_LIST.map((item) => item.link);
+  console.log("RANDOM_GHIM_LIST ", RANDOM_GHIM_LIST);
   console.log("Final result: ", finalResult);
   return finalResult.map((item) => item.link);
 };
 
 async function myTask() {
   const currentTime = moment().format("DD/MM/YYYY HH:mm:ss");
+  const currentDate = new Date();
+
+  // Get the current hour (0-23)
+  const currentHour = currentDate.getHours();
   currentId = uuidv4();
   isWork = true;
   console.log("Message Id: " + currentId);
@@ -1156,28 +1236,37 @@ async function myTask() {
   //Gửi tin nhắn thông báo post link
   //-1001957652310 seeding channel
   //-1001917262259 test channel
-  bot.sendMessage(
-    -1001957652310,
-    `ĐÂY LÀ BÀI GOM LINK TRONG 15 PHÚT THEO KHUNG GIỜ.
-Hello anh em. Anh em có bài post nào thì bỏ dưới cmt nhé, lưu ý là bài mới, bài cũ không có tác dụng. 15p sau mình sẽ post lên cho mọi người cùng tương tác.
-FUN FACT: với cách tính điểm hiện tại, bạn chỉ cần 5 lần done all sẽ chiếm được top1!!!  👇👇👇
+  bot
+    .sendMessage(
+      -1001957652310,
+      `KHUNG ${currentHour}H - ĐÂY LÀ BÀI GOM LINK TRONG 15 PHÚT.
+
+LƯU Ý: TELE PC ĐANG LỖI, GỬI LINK BẰNG TELE TRÊN ĐIỆN THOẠI, KHÔNG GỬI LINK QUA PC, GỬI LINK QUA PC BOT KHÔNG GOM ĐƯỢC
 
 - Cơ chế ghim link:
   1. Gom tất cả link của anh em lại thành 1 danh sách
   2. Loại ra tất cả link của anh em đã lên trong ngày được danh sách mới
   3. Từ danh sách mới lấy ra 12 link của anh em theo thứ tự rank cao -> thấp
-=> Anh em không nằm trong top vẫn hoàn toàn có thể được ghim nên đừng ngại post link nhé, vì sẽ có những lúc có ít link được gửi thì ae dễ được ghim hơn.
 
-Thank anh em <3.
+BONUS: Có thể gửi link bằng cú pháp: /random + link để thêm cơ hội được ghim với phí 20 điểm hoặc free nếu đã done5 trước đó!
+
 Msg id:  ${currentId} 
 `
-  );
+    )
+    .then((sentMessage) => {
+      const messageId = sentMessage.message_id;
+
+      // Thiết lập hẹn giờ để xoá tin nhắn sau 30 phút (1800000 milliseconds)
+      // setTimeout(() => {
+      //   bot.deleteMessage(groupId, messageId);
+      // }, 900000); // 15 phút
+    })
+    .catch((error) => {
+      console.error("Error sending message:", error);
+    });
+
   console.log("Chờ user gửi link trong 15p!");
   await sleep(60000 * 15);
-  const currentDate = new Date();
-
-  // Get the current hour (0-23)
-  const currentHour = currentDate.getHours();
 
   console.log("Current hour:", currentHour);
   let ghimLink;
@@ -1195,11 +1284,22 @@ ${pushList
   .join("\n")}`;
   }
 
+  let RANDOM_GHIM_LIST_MESSAGE = "";
+
+  if (RANDOM_GHIM_LIST.length > 0) {
+    RANDOM_GHIM_LIST_MESSAGE = `\n👉 Slot /random + link:
+${RANDOM_GHIM_LIST.map(
+  (item, index) => index + 1 + ". " + item.split("/photo")[0]
+).join("\n")}`;
+  }
+
   let ghimLinkFinal =
-    `Khung giờ: ${currentHour}H ${new Date().toLocaleDateString()}.\n` +
+    `Khung giờ: ${currentHour}H ${new Date().toLocaleDateString()}.\n
+Hiện tại Tele PC đang update, anh em làm task xong thì nhớ DONE ALL bằng điện thoại, còn tương tác bằng PC hay điện thoại cũng được\n` +
     ghimLink
       .map((item, index) => index + 1 + ". " + item.split("/photo")[0])
       .join("\n")
+      .concat(RANDOM_GHIM_LIST_MESSAGE)
       .concat(pushListMessage)
       .concat(` \n\nHi ae, đây là các post của lượt này, ae tương tác ủng hộ các bạn, xong hết nhớ reply "done all" ( rất quan trọng), có thể kèm link xuống cho ae trả nhé.
 Tối đa 60 điểm cho 1 bài ghim nhé anh em!
@@ -1253,6 +1353,9 @@ function extractUrls(text) {
 // Lên lịch cho các thời điểm cụ thể trong ngày
 
 const writeScoreFunc = () => {
+  let newRankScore = markDuplicatesAsBanned(rankScore);
+  console.log(newRankScore.length);
+  rankScore = JSON.parse(JSON.stringify(newRankScore));
   fs.writeFileSync("./score.json", JSON.stringify(rankScore));
   fs.writeFileSync("./linksObject.json", JSON.stringify(linksObject));
 };
@@ -1415,6 +1518,28 @@ function getRandomElementsFromArray(array, x) {
   return result;
 }
 
+function markDuplicatesAsBanned(objects) {
+  // Tạo một đối tượng dùng để theo dõi các twitterIdStr đã xuất hiện
+  const twitterIdStrMap = {};
+
+  for (let i = 0; i < objects.length; i++) {
+    const currentObject = objects[i];
+    const { twitterIdStr } = currentObject;
+
+    // Kiểm tra xem twitterIdStr đã xuất hiện trước đó hay chưa
+    if (twitterIdStr && twitterIdStr in twitterIdStrMap) {
+      // Nếu đã xuất hiện trước đó, đánh dấu cả hai object là banned: true
+      currentObject.banned = true;
+      twitterIdStrMap[twitterIdStr].banned = true;
+    } else {
+      // Nếu chưa xuất hiện, thêm twitterIdStr vào bản đồ và đặt giá trị là đối tượng hiện tại
+      twitterIdStrMap[twitterIdStr] = currentObject;
+    }
+  }
+
+  return objects;
+}
+
 const checkVar = (urls, username, twitterIdStr) => {
   try {
     console.log("Đang check var: " + username);
@@ -1507,12 +1632,12 @@ cron.schedule("*/1 * * * *", writeScoreFunc);
 cron.schedule("*/1 * * * *", write5linkFunc);
 cron.schedule("0 12 * * *", writeSnapshotFunc);
 cron.schedule("0 23 * * *", writeSnapshotClearFunc);
-cron.schedule("30 6,9,12,15,18,21 * * *", adAlert);
-cron.schedule("50 6,9,12,15,18,21 * * *", pointUpdateAlert);
-cron.schedule("*/18 7-23 * * *", writeReportFunc);
+// cron.schedule("30 6,9,12,15,18,21 * * *", adAlert);
+// cron.schedule("50 6,9,12,15,18,21 * * *", pointUpdateAlert);
+// cron.schedule("*/18 7-23 * * *", writeReportFunc);
 // cron.schedule("*/10 7-23 * * *", done5Alert);
-cron.schedule("32 7-23 * * *", ruleAlert);
-cron.schedule("12 7-23 * * *", commandAlert);
+// cron.schedule("32 7-23 * * *", ruleAlert);
+// cron.schedule("12 7-23 * * *", commandAlert);
 // cron.schedule("42 7-23 * * *", reportAlert);
 
 cron.schedule("0 7,10,13,16,19,22 * * *", async () => {
@@ -1539,7 +1664,7 @@ async function checkAndSleep() {
   ) {
     // Thực hiện công việc và sleep 60 giây
     console.log("Sleep 60s");
-    await sleep(60000); // Kích hoạt lại sau 60 giây
+    return;
   }
 }
 
