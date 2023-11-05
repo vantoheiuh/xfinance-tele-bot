@@ -245,6 +245,28 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
     isReverse = true;
   }
 
+  if (
+    currentAccount.twitter &&
+    currentAccount.twitter.split("?")[0].split("/")[3].toLowerCase() !=
+      extractUrls(msg.text)[0].split("?")[0].split("/")[3].toLowerCase()
+      && containsLink(msg.text)
+  ) {
+    bot.deleteMessage(chatId, msg.message_id);
+    bot.sendMessage(
+      chatId,
+      `Link X định danh với tele của bạn ${currentAccount.firstName} ${
+        currentAccount.lastName ? currentAccount.lastName : ""
+      } là ${
+        currentAccount.twitter.split("?")[0].split("/status")[0]
+      }. Vui lòng gửi đúng link X để được lên ghim tương tác!`,
+      {
+        disable_web_page_preview: true,
+        reply_to_message_id: msg.message_id,
+      }
+    );
+    return;
+  }
+
   // COLLECT LINKS
   if (
     isWork &&
@@ -289,37 +311,18 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
       }
     }
     if (isWork) {
-      if (
-        currentAccount.twitter &&
-        currentAccount.twitter.split("?")[0].split("/")[3].toLowerCase() ==
-          extractUrls(msg.text)[0].split("?")[0].split("/")[3].toLowerCase()
-      ) {
-        currentTaskList.push({
-          username: msg.from.username,
-          link: extractUrls(msg.text)[0].split("?")[0],
-          id: msg.from.id,
-          twitterName: extractUrls(msg.text)[0].split("?")[0].split("/")[3],
-          random: msg.text.indexOf("/random") !== -1 ? true : false,
-        });
+      currentTaskList.push({
+        username: msg.from.username,
+        link: extractUrls(msg.text)[0].split("?")[0],
+        id: msg.from.id,
+        twitterName: extractUrls(msg.text)[0].split("?")[0].split("/")[3],
+        random: msg.text.indexOf("/random") !== -1 ? true : false,
+      });
 
-        console.log(currentTaskList.length);
+      console.log(currentTaskList.length);
 
-        if (msg.text.indexOf("/random") !== -1) {
-          currentAccount.score -= 20;
-        }
-      } else {
-        bot.sendMessage(
-          chatId,
-          `Link X định danh với tele của bạn ${currentAccount.firstName} ${
-            currentAccount.lastName ? currentAccount.lastName : ""
-          } là ${
-            currentAccount.twitter.split("?")[0].split("/status")[0]
-          }. Vui lòng gửi đúng link X để được lên ghim tương tác!`,
-          {
-            disable_web_page_preview: true,
-            reply_to_message_id: msg.message_id,
-          }
-        );
+      if (msg.text.indexOf("/random") !== -1) {
+        currentAccount.score -= 20;
       }
     }
   } else {
