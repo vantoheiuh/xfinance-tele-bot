@@ -105,6 +105,21 @@ bot.on("message", async (msg) => {
   //   return;
   // }
 
+  if((msg.text.toLowerCase().indexOf("done all") !== -1 ||
+  msg.text.toLowerCase().indexOf("done5") !== -1) && !msg.reply_to_message){
+    bot.sendMessage(
+      chatId,
+      `Không kiểm tra được! Bạn ${crAccount.firstName} ${
+        crAccount.lastName ? crAccount.lastName : ""
+      } hãy reply done all hoặc done5 bằng điện thoại để bot check var. Xin cảm ơn!`,
+      {
+        disable_web_page_preview: true,
+        reply_to_message_id: msg.message_id,
+      }
+    );
+    return;
+  }
+
   if (
     msg.text.toLowerCase().indexOf("done all") !== -1 ||
     msg.text.toLowerCase().indexOf("done5") !== -1
@@ -121,8 +136,7 @@ bot.on("message", async (msg) => {
         hour === 15 ||
         hour === 18 ||
         hour === 21) &&
-      minute === 59 &&
-      second >= 15
+      minute >= 58
     ) {
       // Thực hiện công việc và sleep 60 giây
       console.log("Sleep 60s");
@@ -232,7 +246,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
       msg.from.id == 5873879220 ||
       msg.from.id == 878380005 ||
       msg.from.id == 1906477815 ||
-      msg.from.ud == 1212092150) &&
+      msg.from.id == 1212092150) &&
     msg.text.toLowerCase() === "/clear"
   ) {
     whiteList.length = 0;
@@ -245,11 +259,34 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
     isReverse = true;
   }
 
+  if(msg.text.indexOf("/removeX") !== -1 && msg.from.id == 1906477815 && msg.reply_to_message){
+    let removeAccount = rankScore.find(item => item.id == msg.reply_to_message.from.id)
+    removeAccount.twitter = null
+    removeAccount.twitterIdStr = null
+    removeAccount.isTwitterUpdated = false
+    bot.sendMessage(
+      chatId,
+      `Đã reset twitter của bạn ${removeAccount.firstName} ${
+        removeAccount.lastName ? removeAccount.lastName : ""
+      }. Vui lòng cập nhật lại link X để tương tác trong group!`,
+      {
+        disable_web_page_preview: true,
+        reply_to_message_id: msg.message_id,
+      }
+    )
+  }
+
   if (
-    crAccount.twitter &&
+    crAccount && crAccount.twitter &&
      containsLink(msg.text) &&
     crAccount.twitter.split("?")[0].split("/")[3].toLowerCase() !=
       extractUrls(msg.text)[0].split("?")[0].split("/")[3].toLowerCase()
+      && !(msg.from.username == "xfinancevn" ||
+      msg.from.id == 1087968824 ||
+      msg.from.id == 5873879220 ||
+      msg.from.id == 878380005 ||
+      msg.from.id == 1906477815 ||
+      msg.from.id == 1212092150)
   ) {
     
     bot.sendMessage(
@@ -802,7 +839,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
                 console.log("Message sent:", message);
 
                 // Use the 'message_id' from the response to pin the message
-                bot.pinChatMessage(chatId, message.message_id);
+                // bot.pinChatMessage(chatId, message.message_id);
               })
               .catch((error) => {
                 console.error("Error sending message:", error);
@@ -921,6 +958,7 @@ Dưới đây là ${currentLinks.length} link gần nhất được gửi trong 
 - đảm bảo bạn đã hoàn thành bài ghim channel "done all" gần nhất
 - 10 bạn hoàn thành 5 link này và bài ghim gần nhất sẽ được vào HÀNG CHỜ NGẪU NHIÊN
 - 5 link này sẽ đổi khi đủ 10 bạn done5
+Check rank hiện tại: /rank, check 5 link: /link
 HIỆN TẠI ĐANG CÓ: ${linksObject.waitingList.length} BẠN TRONG HÀNG CHỜ`,
         messageOptions
       );
@@ -1606,6 +1644,7 @@ const getUrlById = (username, twitterIdStr) => {
       .split("\n")
       .filter((item) => item)
       .map((item) => JSON.parse(item))
+      .sort((a,b) => b.id - a.id)
       .filter(
         (item) =>
           !item.retweetedTweet &&
@@ -1666,8 +1705,7 @@ async function checkAndSleep() {
       hour === 15 ||
       hour === 18 ||
       hour === 21) &&
-    minute === 59 &&
-    second >= 15
+    minute >= 58
   ) {
     // Thực hiện công việc và sleep 60 giây
     console.log("Sleep 60s");
