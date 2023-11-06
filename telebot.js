@@ -784,7 +784,9 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
 
         currentAccount.done5List.push(currentId);
         if (varCount >= 4) {
-          linksObject.waitingList.push(currentAccount.id);
+          if(linksObject.waitingList.indexOf(currentAccount.id) === -1){
+            linksObject.waitingList.push(currentAccount.id);
+          }
           bot.sendMessage(
             chatId,
             `BONUS: Bạn ${msg.from.first_name} ${
