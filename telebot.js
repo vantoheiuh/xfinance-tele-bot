@@ -1688,7 +1688,7 @@ cron.schedule("0 23 * * *", writeSnapshotClearFunc);
 // cron.schedule("12 7-23 * * *", commandAlert);
 // cron.schedule("42 7-23 * * *", reportAlert);
 
-cron.schedule("14 7,10,13,16,19,22 * * *", async () => {
+cron.schedule("0 7,10,13,16,19,22 * * *", async () => {
   console.log("Cron job started.");
   await myTask();
   console.log("Cron job finished.");
