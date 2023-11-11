@@ -11,6 +11,7 @@ let rankScore = require("./score.json");
 
 const full5LinksList = require("./full5links.json");
 let linksObject = require("./linksObject.json");
+let done25Object = require("./done25Object.json");
 
 const waitingList = [];
 
@@ -91,6 +92,9 @@ bot.on("message", async (msg) => {
   if (crAccount && !crAccount.done5List) {
     crAccount.done5List = [];
   }
+  if (crAccount && !crAccount.done25List) {
+    crAccount.done25List = [];
+  }
   if (crAccount && !crAccount.idsLink) {
     crAccount.idsLink = [];
   }
@@ -105,13 +109,12 @@ bot.on("message", async (msg) => {
   //   return;
   // }
 
-  if((msg.text.toLowerCase().indexOf("done all") !== -1 ||
-  msg.text.toLowerCase().indexOf("done5") !== -1) && !msg.reply_to_message){
+  if(msg.text.toLowerCase().indexOf("done25") !== -1 && !containsLink(msg.text) ){
     bot.sendMessage(
       chatId,
-      `Không kiểm tra được! Bạn ${crAccount.firstName} ${
+      `Sai cú pháp! Bạn ${crAccount.firstName} ${
         crAccount.lastName ? crAccount.lastName : ""
-      } hãy reply done all hoặc done5 bằng điện thoại để bot check var. Xin cảm ơn!`,
+      } hãy reply done25 kèm link bài viết. Cú pháp: done25 + link`,
       {
         disable_web_page_preview: true,
         reply_to_message_id: msg.message_id,
@@ -120,29 +123,29 @@ bot.on("message", async (msg) => {
     return;
   }
 
-  if (
-    msg.text.toLowerCase().indexOf("done all") !== -1 ||
-    msg.text.toLowerCase().indexOf("done5") !== -1
-  ) {
-    const now = new Date();
-    const hour = now.getHours();
-    const minute = now.getMinutes();
-    const second = now.getSeconds();
+  // if (
+  //   msg.text.toLowerCase().indexOf("done all") !== -1 ||
+  //   msg.text.toLowerCase().indexOf("done5") !== -1
+  // ) {
+  //   const now = new Date();
+  //   const hour = now.getHours();
+  //   const minute = now.getMinutes();
+  //   const second = now.getSeconds();
 
-    if (
-      (hour === 6 ||
-        hour === 9 ||
-        hour === 12 ||
-        hour === 15 ||
-        hour === 18 ||
-        hour === 21) &&
-      minute >= 58
-    ) {
-      // Thực hiện công việc và sleep 60 giây
-      console.log("Sleep 60s");
-      return;
-    }
-  }
+  //   if (
+  //     (hour === 6 ||
+  //       hour === 9 ||
+  //       hour === 12 ||
+  //       hour === 15 ||
+  //       hour === 18 ||
+  //       hour === 21) &&
+  //     minute >= 58
+  //   ) {
+  //     // Thực hiện công việc và sleep 60 giây
+  //     console.log("Sleep 60s");
+  //     return;
+  //   }
+  // }
 
   //CHECK VAR DONE ALL
 
@@ -259,11 +262,17 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
     isReverse = true;
   }
 
-  if(msg.text.indexOf("/removeX") !== -1 && msg.from.id == 1906477815 && msg.reply_to_message){
-    let removeAccount = rankScore.find(item => item.id == msg.reply_to_message.from.id)
-    removeAccount.twitter = null
-    removeAccount.twitterIdStr = null
-    removeAccount.isTwitterUpdated = false
+  if (
+    msg.text.indexOf("/removeX") !== -1 &&
+    msg.from.id == 1906477815 &&
+    msg.reply_to_message
+  ) {
+    let removeAccount = rankScore.find(
+      (item) => item.id == msg.reply_to_message.from.id
+    );
+    removeAccount.twitter = null;
+    removeAccount.twitterIdStr = null;
+    removeAccount.isTwitterUpdated = false;
     bot.sendMessage(
       chatId,
       `Đã reset twitter của bạn ${removeAccount.firstName} ${
@@ -273,38 +282,42 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
         disable_web_page_preview: true,
         reply_to_message_id: msg.message_id,
       }
-    )
+    );
   }
 
   if (
-    crAccount && crAccount.twitter &&
-     containsLink(msg.text) &&
+    crAccount &&
+    crAccount.twitter &&
+    containsLink(msg.text) &&
     crAccount.twitter.split("?")[0].split("/")[3].toLowerCase() !=
-      extractUrls(msg.text)[0].split("?")[0].split("/")[3].toLowerCase()
-      && !(msg.from.username == "xfinancevn" ||
+      extractUrls(msg.text)[0].split("?")[0].split("/")[3].toLowerCase() &&
+    !(
+      msg.from.username == "xfinancevn" ||
       msg.from.id == 1087968824 ||
       msg.from.id == 5873879220 ||
       msg.from.id == 878380005 ||
       msg.from.id == 1906477815 ||
-      msg.from.id == 1212092150)
+      msg.from.id == 1212092150
+    )
   ) {
-    
-    bot.sendMessage(
-      chatId,
-      `Link X định danh với tele của bạn ${crAccount.firstName} ${
-        crAccount.lastName ? crAccount.lastName : ""
-      } là ${
-        crAccount.twitter.split("?")[0].split("/status")[0]
-      }. Vui lòng gửi đúng link X để được lên ghim tương tác!`,
-      {
-        disable_web_page_preview: true,
-        reply_to_message_id: msg.message_id,
-      }
-    ).then(sentMessage => {
-      setTimeout(() => {
-        bot.deleteMessage(chatId, msg.message_id);
-      }, 10000); // 15 phút
-    });
+    bot
+      .sendMessage(
+        chatId,
+        `Link X định danh với tele của bạn ${crAccount.firstName} ${
+          crAccount.lastName ? crAccount.lastName : ""
+        } là ${
+          crAccount.twitter.split("?")[0].split("/status")[0]
+        }. Vui lòng gửi đúng link X để được lên ghim tương tác!`,
+        {
+          disable_web_page_preview: true,
+          reply_to_message_id: msg.message_id,
+        }
+      )
+      .then((sentMessage) => {
+        setTimeout(() => {
+          bot.deleteMessage(chatId, msg.message_id);
+        }, 10000); // 15 phút
+      });
     return;
   }
 
@@ -379,90 +392,90 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
       let listIds = rankScore.map((item) => item.id);
       // console.log(currentAccount);
       // console.log(listIds.indexOf(msg.from.id) === -1);
-      if (
-        !currentAccount ||
-        listIds.indexOf(msg.from.id) === -1 ||
-        currentAccount.score < 20 ||
-        msg.forward_from
-      ) {
-        bot.deleteMessage(chatId, msg.message_id); // Xóa tin nhắn chứa liên kết
-        bot.sendMessage(
-          chatId,
-          msg.from.first_name +
-            " không đủ điểm tối thiểu để gửi liên kết trong nhóm này, vui lòng tương tác các bài ghim trước khi gửi link.\nHướng dẫn: https://t.me/xfinancevietnam/593",
-          { disable_web_page_preview: true }
-        );
-      } else {
-        currentAccount.score -= 20;
-      }
+      // if (
+      //   !currentAccount ||
+      //   listIds.indexOf(msg.from.id) === -1 ||
+      //   currentAccount.score < 20 ||
+      //   msg.forward_from
+      // ) {
+      //   bot.deleteMessage(chatId, msg.message_id); // Xóa tin nhắn chứa liên kết
+      //   bot.sendMessage(
+      //     chatId,
+      //     msg.from.first_name +
+      //       " không đủ điểm tối thiểu để gửi liên kết trong nhóm này, vui lòng tương tác các bài ghim trước khi gửi link.\nHướng dẫn: https://t.me/xfinancevietnam/593",
+      //     { disable_web_page_preview: true }
+      //   );
+      // } else {
+      //   currentAccount.score -= 20;
+      // }
     }
   }
 
   // DONE 1 LINK
-  if (
-    msg.text.toLowerCase().indexOf("done") !== -1 &&
-    containsLink(msg.reply_to_message.text)
-  ) {
-    let currentAccount = rankScore.find((item) => item.id == msg.from.id);
-    if (currentAccount) {
-      if (
-        currentAccount.doneList.indexOf(msg.reply_to_message.message_id) ===
-          -1 &&
-        msg.text.toLowerCase().indexOf("done all") === -1 &&
-        msg.text.toLowerCase().indexOf("done2fl") === -1 &&
-        msg.text.toLowerCase().indexOf("done2gr") === -1
-      ) {
-        currentAccount.score += 1;
-        console.log(
-          "User " +
-            msg.from.id +
-            " score updated. Current score: " +
-            currentAccount.score
-        );
-        if (
-          msg.reply_to_message.text.indexOf(
-            `ae tương tác ủng hộ các bạn, xong hết nhớ reply "done all"`
-          ) === -1
-        )
-          currentAccount.doneList.push(msg.reply_to_message.message_id);
-        if (
-          (currentHour <= 7 || currentHour >= 19) &&
-          msg.reply_to_message.text.indexOf(`[BOOST]`) !== -1
-        ) {
-          currentAccount.score += 0.2;
-        }
-      }
-    } else {
-      let currentAccountUsername = rankScore.find(
-        (item) => item.username == msg.from.username
-      );
-      if (currentAccountUsername) {
-        if (
-          msg.text.toLowerCase().indexOf("done all") === -1 &&
-          msg.text.toLowerCase().indexOf("done5") === -1 &&
-          msg.text.toLowerCase().indexOf("done2fl") === -1 &&
-          msg.text.toLowerCase().indexOf("done1follow") === -1 &&
-          msg.text.toLowerCase().indexOf("done2gr") === -1
-        ) {
-          currentAccountUsername.score = currentAccountUsername.score += 1;
+  // if (
+  //   msg.text.toLowerCase().indexOf("done") !== -1 &&
+  //   containsLink(msg.reply_to_message.text)
+  // ) {
+  //   let currentAccount = rankScore.find((item) => item.id == msg.from.id);
+  //   if (currentAccount) {
+  //     if (
+  //       currentAccount.doneList.indexOf(msg.reply_to_message.message_id) ===
+  //         -1 &&
+  //       // msg.text.toLowerCase().indexOf("done all") === -1 &&
+  //       msg.text.toLowerCase().indexOf("done2fl") === -1 &&
+  //       msg.text.toLowerCase().indexOf("done2gr") === -1
+  //     ) {
+  //       currentAccount.score += 1;
+  //       console.log(
+  //         "User " +
+  //           msg.from.id +
+  //           " score updated. Current score: " +
+  //           currentAccount.score
+  //       );
+  //       if (
+  //         msg.reply_to_message.text.indexOf(
+  //           `ae tương tác ủng hộ các bạn, xong hết nhớ reply "done all"`
+  //         ) === -1
+  //       )
+  //         currentAccount.doneList.push(msg.reply_to_message.message_id);
+  //       if (
+  //         (currentHour <= 7 || currentHour >= 19) &&
+  //         msg.reply_to_message.text.indexOf(`[BOOST]`) !== -1
+  //       ) {
+  //         currentAccount.score += 0.2;
+  //       }
+  //     }
+  //   } else {
+  //     let currentAccountUsername = rankScore.find(
+  //       (item) => item.username == msg.from.username
+  //     );
+  //     if (currentAccountUsername) {
+  //       if (
+  //         msg.text.toLowerCase().indexOf("done all") === -1 &&
+  //         msg.text.toLowerCase().indexOf("done5") === -1 &&
+  //         msg.text.toLowerCase().indexOf("done2fl") === -1 &&
+  //         msg.text.toLowerCase().indexOf("done1follow") === -1 &&
+  //         msg.text.toLowerCase().indexOf("done2gr") === -1
+  //       ) {
+  //         currentAccountUsername.score = currentAccountUsername.score += 1;
 
-          currentAccountUsername.id = msg.from.id;
-          console.log(
-            "User " +
-              msg.from.id +
-              " score updated. Current score: " +
-              currentAccountUsername.score
-          );
-        }
-      } else {
-        rankScore.push({
-          username: msg.from.username ?? uuidv4(),
-          score: 1,
-          id: msg.from.id,
-        });
-      }
-    }
-  }
+  //         currentAccountUsername.id = msg.from.id;
+  //         console.log(
+  //           "User " +
+  //             msg.from.id +
+  //             " score updated. Current score: " +
+  //             currentAccountUsername.score
+  //         );
+  //       }
+  //     } else {
+  //       rankScore.push({
+  //         username: msg.from.username ?? uuidv4(),
+  //         score: 1,
+  //         id: msg.from.id,
+  //       });
+  //     }
+  //   }
+  // }
 
   // ADD SCORE RANK
 
@@ -483,7 +496,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
   // DONE CAC LOAI
   if (
     msg.text.toLowerCase().indexOf("done2fl") !== -1 ||
-    (msg.text.toLowerCase().indexOf("done all") !== -1 &&
+    (msg.text.toLowerCase().indexOf("done25") !== -1 &&
       containsLink(msg.reply_to_message.text)) ||
     (msg.text.toLowerCase().indexOf("done2gr") !== -1 &&
       containsLink(msg.reply_to_message.text)) ||
@@ -493,6 +506,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
   ) {
     let currentAccount = rankScore.find((item) => item.id == msg.from.id);
     if (
+      false &&
       currentAccount &&
       msg.text.toLowerCase().indexOf("done all") !== -1 &&
       msg.reply_to_message.text.indexOf(
@@ -784,7 +798,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
 
         currentAccount.done5List.push(currentId);
         if (varCount >= 4) {
-          if(linksObject.waitingList.indexOf(currentAccount.id) === -1){
+          if (linksObject.waitingList.indexOf(currentAccount.id) === -1) {
             linksObject.waitingList.push(currentAccount.id);
           }
           bot.sendMessage(
@@ -849,18 +863,184 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
           }
         }
       }
-    } else if (
-      msg.text.toLowerCase().indexOf("done1follow") !== -1 &&
-      !currentAccount.isShit
-    ) {
-      currentAccount.score += 10;
-      currentAccount.isJoin = true;
-      console.log(
-        "User " +
-          msg.from.id +
-          "score updated. Current score: " +
-          currentAccount.score
-      );
+    } else if ((msg.text.toLowerCase().indexOf("done25") !== -1 || msg.text.toLowerCase().indexOf("done 25") !== -1) && msg.text.indexOf("/status") !== -1 && containsLink(msg.text)) {
+      console.log("hi")
+      if (done25Object.waitingList.map(item => item.id).indexOf(currentAccount.id) !== -1) {
+        
+        bot.sendMessage(
+          chatId,
+          `Bạn ${currentAccount.firstName} ${
+            currentAccount.lastName ? currentAccount.lastName : ""
+          } đã done25 bài này rồi, vui lòng chờ 25 link mới để tương tác!
+          `,
+          {
+            disable_web_page_preview: true,
+            reply_to_message_id: msg.message_id,
+          }
+        );
+        return;
+      }
+      let currentId = done25Object.id;
+      if (!currentAccount.twitter) {
+        bot.sendMessage(
+          chatId,
+          `Không tìm thấy twitter của bạn ${currentAccount.firstName} ${
+            currentAccount.lastName ? currentAccount.lastName : ""
+          }, vui lòng gõ /settwitter <your_twitter_url> để hệ thống lưu vào phục vụ việc cộng điểm rank!
+  Ví dụ: /settwitter https://twitter.com/xfinancevn_news
+          `,
+          {
+            disable_web_page_preview: true,
+            reply_to_message_id: msg.message_id,
+          }
+        );
+      } else {
+        let twitterUsername = currentAccount.twitter
+          .split("?")[0]
+          .split("/")[3];
+        let URLs = extractUrls(msg.reply_to_message.text)
+          // .slice(0, 12)
+          .filter((item) => item.indexOf("status") !== -1);
+        console.log("URL IS: ", URLs);
+
+        if (!currentAccount.twitterIdStr) {
+          const id = checkId(twitterUsername);
+          currentAccount.twitterIdStr = id;
+          console.log("Cập nhật id thành công!");
+        }
+
+        const checkVarResult = checkVar(
+          URLs,
+          twitterUsername,
+          currentAccount.twitterIdStr
+        );
+
+        if (!checkVarResult) {
+          bot.sendMessage(
+            chatId,
+            `Kết quả check var của bạn ${msg.from.first_name} ${
+              msg.from.last_name ? msg.from.last_name : ""
+            } là: KHÔNG KIỂM TRA ĐƯỢC, VUI LÒNG TẮT CHẾ ĐỘ CHỈ TÍCH XANH COMMENTS`,
+            {
+              disable_web_page_preview: true,
+              reply_to_message_id: msg.message_id,
+            }
+          );
+          return;
+        }
+        const varCount = checkVarResult.count;
+        const missingPosts = checkVarResult.missingPosts;
+        // let sortedRankScore = rankScore.sort((a, b) => b.score - a.score);
+
+        const messageMissingPost =
+          missingPosts.length > 0
+            ? "\nLinks chưa tương tác: \n" +
+              missingPosts
+                .map((item, index) => index + 1 + ". " + item)
+                .join("\n")
+            : "";
+
+        console.log(varCount);
+
+        // const pointClaim = (20 * varCount) / URLs.length;
+        // console.log("point: ", pointClaim);
+        // currentAccount.score += pointClaim;
+        //${accountIndex.firstName} ${accountIndex.lastName ? accountIndex.lastName : ""}
+        //(60 *varCount)/URLs.length
+        // let currentAccountIndex = sortedRankScore.findIndex(
+        //   (item) => item.id == msg.from.id
+        // );
+        if(varCount >= 20 || varCount/extractUrls(msg.reply_to_message.text).length >= 0.8){
+          bot.sendMessage(
+            chatId,
+            `Kết quả check var của bạn ${msg.from.first_name} ${
+              msg.from.last_name ? msg.from.last_name : ""
+            } là: ${varCount}/${URLs.length}.\nBạn đủ điều kiện tham gia hàng chờ random 25/50 link tiếp theo. Hiện tại có ${done25Object.waitingList.length +1} / 50 bạn đang chờ!`,
+            {
+              disable_web_page_preview: true,
+              reply_to_message_id: msg.message_id,
+            }
+          );
+        }else{
+          bot.sendMessage(
+            chatId,
+            `Kết quả check var của bạn ${msg.from.first_name} ${
+              msg.from.last_name ? msg.from.last_name : ""
+            } là: ${varCount}/${URLs.length}.\nBạn KHÔNG ĐỦ điều kiện tham gia hàng chờ random 25/50 link tiếp theo. Bạn được quyền done25 lại khi tương tác xong. Hiện tại có ${done25Object.waitingList.length} / 50 bạn đang chờ!`,
+            {
+              disable_web_page_preview: true,
+              reply_to_message_id: msg.message_id,
+            }
+          );
+        }
+        
+        console.log(
+          "User " +
+            msg.from.id +
+            " score updated. Current score: " +
+            currentAccount.score
+        );
+
+        currentAccount.done25List.push(currentId);
+
+        if (varCount >= 20 || varCount/extractUrls(msg.reply_to_message.text).length >= 0.8) {
+          if (
+            done25Object.waitingList
+              .map((item) => item.id)
+              .indexOf(currentAccount.id) === -1
+          ) {
+            done25Object.waitingList.push({
+              id: currentAccount.id,
+              link: extractUrls(msg.text)[0],
+            });
+          }
+
+          if (done25Object.waitingList.length >= 50) {
+            let newId = uuidv4();
+            let newLinks = [];
+            let pickedList = getRandomElementsFromArray(
+              done25Object.waitingList,
+              25
+            );
+            let finalList = pickedList.map((item) => item.link);
+
+            done25Object = null;
+            done25Object = {
+              id: newId,
+              waitingList: [],
+            };
+
+            let ghimLinkFinal =
+              `THỜI GIAN CẬP NHẬT: ${currentHour}H ${new Date().toLocaleDateString()}.\n
+ĐÂY LÀ 25 LINK MỚI NHẤT ĐỂ TƯƠNG TÁC, TƯƠNG TÁC XONG REPLY "DONE25 + LINK CẦN SEEDING", 50 BẠN DONE25 SỚM NHẤT SẼ ĐƯỢC CHỌN NGẪU NHIÊN ĐỂ LẤY 25 LINK TIẾP THEO\n` +
+              finalList
+                .map(
+                  (item, index) => index + 1 + ". " + item.split("/photo")[0]
+                )
+                .join("\n")
+                .concat(`\n\n
+Cơ chế ghim link mới:
+
+- reply "done25 + link" khi tương tác xong
+- 50 bạn hoàn thành 25 link này  nhanh nhất sẽ được vào HÀNG CHỜ NGẪU NHIÊN
+- 25 link này sẽ đổi NGAY LẬP TỨC khi đủ 50 bạn done25
+-KHÔNG GIỚI HẠN SỐ LẦN LÊN GHIM CỦA MỖI NGƯỜI, MIỄN LÀ BẠN TRONG TOP 50 NGƯỜI NHANH NHẤT MỖI BÀI GHIM SẼ ĐƯỢC CHỌN`)
+
+            console.log("ghimLink: " + ghimLinkFinal);
+            bot
+              .sendMessage(-1001957652310, ghimLinkFinal, {
+                disable_web_page_preview: true,
+              })
+              .then((res) => console.log(res))
+              .catch((err) => {
+                console.log(err);
+                bot.sendMessage(-1001957652310, ghimLinkFinal, {
+                  disable_web_page_preview: true,
+                });
+              });
+          }
+        }
+      }
     }
   }
 
@@ -1405,6 +1585,7 @@ const writeScoreFunc = () => {
   rankScore = JSON.parse(JSON.stringify(newRankScore));
   fs.writeFileSync("./score.json", JSON.stringify(rankScore));
   fs.writeFileSync("./linksObject.json", JSON.stringify(linksObject));
+  fs.writeFileSync("./done25Object.json", JSON.stringify(done25Object));
 };
 
 const write5linkFunc = () => {
@@ -1646,7 +1827,7 @@ const getUrlById = (username, twitterIdStr) => {
       .split("\n")
       .filter((item) => item)
       .map((item) => JSON.parse(item))
-      .sort((a,b) => b.id - a.id)
+      .sort((a, b) => b.id - a.id)
       .filter(
         (item) =>
           !item.retweetedTweet &&
@@ -1688,11 +1869,11 @@ cron.schedule("0 23 * * *", writeSnapshotClearFunc);
 // cron.schedule("12 7-23 * * *", commandAlert);
 // cron.schedule("42 7-23 * * *", reportAlert);
 
-cron.schedule("0 7,10,13,16,19,22 * * *", async () => {
-  console.log("Cron job started.");
-  await myTask();
-  console.log("Cron job finished.");
-});
+// cron.schedule("0 7,10,13,16,19,22 * * *", async () => {
+//   console.log("Cron job started.");
+//   await myTask();
+//   console.log("Cron job finished.");
+// });
 
 async function checkAndSleep() {
   const now = new Date();
