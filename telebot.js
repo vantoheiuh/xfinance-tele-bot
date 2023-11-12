@@ -879,7 +879,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
         );
         return;
       }
-      let currentId = done25Object.id;
+      let currentId = msg.text.toLowerCase().split("MSG-ID: ")[1].length >10 ?msg.text.toLowerCase().split("MSG-ID: ")[1]:  done25Object.id;
 
       if(currentAccount.done25List.indexOf(currentId) !== -1){
         bot.sendMessage(
@@ -1041,7 +1041,9 @@ Cơ chế ghim link mới:
 - reply "done25 + link" khi tương tác xong
 - 50 bạn hoàn thành 25 link này  nhanh nhất sẽ được vào HÀNG CHỜ NGẪU NHIÊN
 - 25 link này sẽ đổi NGAY LẬP TỨC khi đủ 50 bạn done25
--KHÔNG GIỚI HẠN SỐ LẦN LÊN GHIM CỦA MỖI NGƯỜI, MIỄN LÀ BẠN TRONG TOP 50 NGƯỜI NHANH NHẤT MỖI BÀI GHIM SẼ ĐƯỢC CHỌN`)
+-KHÔNG GIỚI HẠN SỐ LẦN LÊN GHIM CỦA MỖI NGƯỜI, MIỄN LÀ BẠN TRONG TOP 50 NGƯỜI NHANH NHẤT MỖI BÀI GHIM SẼ ĐƯỢC CHỌN
+
+MSG-ID: ${newId}`)
 
             console.log("ghimLink: " + ghimLinkFinal);
             bot
@@ -1673,7 +1675,9 @@ Cơ chế ghim link mới:
 - 50 bạn hoàn thành 25 link này  nhanh nhất sẽ được vào HÀNG CHỜ NGẪU NHIÊN
 - 25 link này sẽ đổi NGAY LẬP TỨC khi đủ 50 bạn done25
 
-=> KHÔNG GIỚI HẠN SỐ LẦN LÊN GHIM CỦA MỖI NGƯỜI, MIỄN LÀ BẠN TRONG TOP 50 NGƯỜI NHANH NHẤT MỖI BÀI GHIM SẼ ĐƯỢC CHỌN`);
+=> KHÔNG GIỚI HẠN SỐ LẦN LÊN GHIM CỦA MỖI NGƯỜI, MIỄN LÀ BẠN TRONG TOP 50 NGƯỜI NHANH NHẤT MỖI BÀI GHIM SẼ ĐƯỢC CHỌN
+
+MSG-ID: ${newId}`);
 
     console.log("ghimLink: " + ghimLinkFinal);
     bot
