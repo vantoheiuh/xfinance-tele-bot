@@ -870,7 +870,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
           chatId,
           `Bạn ${currentAccount.firstName} ${
             currentAccount.lastName ? currentAccount.lastName : ""
-          } đã done25 bài này rồi, vui lòng chờ 25 link mới để tương tác!
+          } đã có trong hàng chờ rồi, vui lòng chờ bài mới để tương tác!
           `,
           {
             disable_web_page_preview: true,
@@ -880,6 +880,23 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
         return;
       }
       let currentId = done25Object.id;
+
+      if(currentAccount.done25List.indexOf(currentId) !== -1){
+        bot.sendMessage(
+          chatId,
+          `Bạn ${currentAccount.firstName} ${
+            currentAccount.lastName ? currentAccount.lastName : ""
+          } đã done25 bài này rồi, vui lòng chờ link mới để tương tác!
+          `,
+          {
+            disable_web_page_preview: true,
+            reply_to_message_id: msg.message_id,
+          }
+        );
+        return;
+      }
+
+
       if (!currentAccount.twitter) {
         bot.sendMessage(
           chatId,
@@ -950,6 +967,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
         //   (item) => item.id == msg.from.id
         // );
         if(varCount >= 20 || varCount/extractUrls(msg.reply_to_message.text).length >= 0.8){
+          currentAccount.done25List.push(currentId);
           bot.sendMessage(
             chatId,
             `Kết quả check var của bạn ${msg.from.first_name} ${
@@ -980,7 +998,6 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
             currentAccount.score
         );
 
-        currentAccount.done25List.push(currentId);
 
         if (varCount >= 20 || varCount/extractUrls(msg.reply_to_message.text).length >= 0.8) {
           if (
