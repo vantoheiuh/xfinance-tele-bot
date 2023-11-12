@@ -1627,38 +1627,36 @@ Ngoài ra, ae follow 2 tài khoản này và reply trong nhóm done2fl sẽ đư
 };
 
 const adAlert = () => {
+  const currentDate = new Date();
+  // Get the current hour (0-23)
+  const currentHour = currentDate.getHours();
+  const currentMin = currentDate.getMinutes()
   if (Date.now() - done25Object.time >= 10800000) {
     let newId = uuidv4();
     let newLinks = [];
-    let pickedList = getRandomElementsFromArray(
-      done25Object.waitingList,
-      25
-    );
+    let pickedList = getRandomElementsFromArray(done25Object.waitingList, 25);
     let finalList = pickedList.map((item) => item.link);
 
     done25Object = null;
     done25Object = {
       id: newId,
       waitingList: [],
-      time: Date.now()
+      time: Date.now(),
     };
 
     let ghimLinkFinal =
-      `THỜI GIAN CẬP NHẬT: ${currentHour}H ${new Date().toLocaleDateString()}.\n
+      `THỜI GIAN CẬP NHẬT: ${currentHour}H${currentMin}P ${new Date().toLocaleDateString()}.\n
 ĐÂY LÀ 25 LINK MỚI NHẤT ĐỂ TƯƠNG TÁC, TƯƠNG TÁC XONG REPLY "DONE25 + LINK CẦN SEEDING", 50 BẠN DONE25 SỚM NHẤT SẼ ĐƯỢC CHỌN NGẪU NHIÊN ĐỂ LẤY 25 LINK TIẾP THEO\n` +
       finalList
-        .map(
-          (item, index) => index + 1 + ". " + item.split("/photo")[0]
-        )
-        .join("\n")
-        .concat(`\n\n
+        .map((item, index) => index + 1 + ". " + item.split("/photo")[0])
+        .join("\n").concat(`\n\n
 Cơ chế ghim link mới:
 - Bài ghim sẽ giữ tối thiểu 1 tiếng để mọi người tương tác, max 3 tiếng bot sẽ xoay link mới
 - Reply "done25 + link" khi tương tác xong
 - 50 bạn hoàn thành 25 link này  nhanh nhất sẽ được vào HÀNG CHỜ NGẪU NHIÊN
 - 25 link này sẽ đổi NGAY LẬP TỨC khi đủ 50 bạn done25
 
-=> KHÔNG GIỚI HẠN SỐ LẦN LÊN GHIM CỦA MỖI NGƯỜI, MIỄN LÀ BẠN TRONG TOP 50 NGƯỜI NHANH NHẤT MỖI BÀI GHIM SẼ ĐƯỢC CHỌN`)
+=> KHÔNG GIỚI HẠN SỐ LẦN LÊN GHIM CỦA MỖI NGƯỜI, MIỄN LÀ BẠN TRONG TOP 50 NGƯỜI NHANH NHẤT MỖI BÀI GHIM SẼ ĐƯỢC CHỌN`);
 
     console.log("ghimLink: " + ghimLinkFinal);
     bot
@@ -1666,7 +1664,7 @@ Cơ chế ghim link mới:
         disable_web_page_preview: true,
       })
       .then((res) => {
-        console.log(res)
+        console.log(res);
       })
       .catch((err) => {
         console.log(err);
