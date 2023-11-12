@@ -1671,7 +1671,10 @@ const adAlert = () => {
   const currentDate = new Date();
   // Get the current hour (0-23)
   const currentHour = currentDate.getHours();
-  const currentMin = currentDate.getMinutes()
+  const currentMin = currentDate.getMinutes();
+  if(currentHour >= 23 || currentHour <= 6){
+    return;
+  }
   if (Date.now() - done25Object.time >= 10800000) {
     let newId = uuidv4();
     let newLinks = [];
