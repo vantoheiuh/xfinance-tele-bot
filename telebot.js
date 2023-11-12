@@ -1625,7 +1625,6 @@ function extractUrls(text) {
 
 const writeScoreFunc = () => {
   let newRankScore = markDuplicatesAsBanned(rankScore);
-  console.log(newRankScore.length);
   rankScore = JSON.parse(JSON.stringify(newRankScore));
   fs.writeFileSync("./score.json", JSON.stringify(rankScore));
   fs.writeFileSync("./linksObject.json", JSON.stringify(linksObject));
