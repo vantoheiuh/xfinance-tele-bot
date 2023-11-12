@@ -864,7 +864,6 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
         }
       }
     } else if ((msg.text.toLowerCase().indexOf("done25") !== -1 || msg.text.toLowerCase().indexOf("done 25") !== -1) && msg.text.indexOf("/status") !== -1 && containsLink(msg.text)) {
-      console.log("hi")
       if (done25Object.waitingList.map(item => item.id).indexOf(currentAccount.id) !== -1) {
         
         bot.sendMessage(
@@ -995,7 +994,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
             });
           }
 
-          if (done25Object.waitingList.length >= 50) {
+          if (done25Object.waitingList.length >= 50 && Date.now() - done25Object.time >= 3600000) {
             let newId = uuidv4();
             let newLinks = [];
             let pickedList = getRandomElementsFromArray(
@@ -1008,6 +1007,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
             done25Object = {
               id: newId,
               waitingList: [],
+              time: Date.now()
             };
 
             let ghimLinkFinal =
@@ -1031,7 +1031,9 @@ Cơ chế ghim link mới:
               .sendMessage(-1001957652310, ghimLinkFinal, {
                 disable_web_page_preview: true,
               })
-              .then((res) => console.log(res))
+              .then((res) => {
+                console.log(res)
+              })
               .catch((err) => {
                 console.log(err);
                 bot.sendMessage(-1001957652310, ghimLinkFinal, {
@@ -1625,33 +1627,54 @@ Ngoài ra, ae follow 2 tài khoản này và reply trong nhóm done2fl sẽ đư
 };
 
 const adAlert = () => {
-  let message = `
-HÃY JOIN ỦNG HỘ 2 KÊNH MỚI CỦA XFINANCE NHÉ AE: 
+  if (Date.now() - done25Object.time >= 10800000) {
+    let newId = uuidv4();
+    let newLinks = [];
+    let pickedList = getRandomElementsFromArray(
+      done25Object.waitingList,
+      25
+    );
+    let finalList = pickedList.map((item) => item.link);
 
-https://t.me/hiddengemsx
-  
-Nhóm cày Airdrop free nhận air đổi đời của nhà X FINANCE anh em vào sớm nhé❤️‍🩹
-  
-https://t.me/shitcoinxfinance
-  
-Nhóm shitcoin lowcap và meme của X FINANCE chuẩn bị sẵn cho siêu sóng sắp tới
+    done25Object = null;
+    done25Object = {
+      id: newId,
+      waitingList: [],
+      time: Date.now()
+    };
 
-NGOÀI RA, ANH EM SAU KHI JOIN 2 KÊNH NÀY VÀ REPLY LẠI MESSAGE NÀY SẼ ĐƯỢC CỘNG ĐIỂM RANK: done2gr
-`;
+    let ghimLinkFinal =
+      `THỜI GIAN CẬP NHẬT: ${currentHour}H ${new Date().toLocaleDateString()}.\n
+ĐÂY LÀ 25 LINK MỚI NHẤT ĐỂ TƯƠNG TÁC, TƯƠNG TÁC XONG REPLY "DONE25 + LINK CẦN SEEDING", 50 BẠN DONE25 SỚM NHẤT SẼ ĐƯỢC CHỌN NGẪU NHIÊN ĐỂ LẤY 25 LINK TIẾP THEO\n` +
+      finalList
+        .map(
+          (item, index) => index + 1 + ". " + item.split("/photo")[0]
+        )
+        .join("\n")
+        .concat(`\n\n
+Cơ chế ghim link mới:
+- Bài ghim sẽ giữ tối thiểu 1 tiếng để mọi người tương tác, max 3 tiếng bot sẽ xoay link mới
+- Reply "done25 + link" khi tương tác xong
+- 50 bạn hoàn thành 25 link này  nhanh nhất sẽ được vào HÀNG CHỜ NGẪU NHIÊN
+- 25 link này sẽ đổi NGAY LẬP TỨC khi đủ 50 bạn done25
 
-  bot
-    .sendMessage(groupId, message)
-    .then((sentMessage) => {
-      const messageId = sentMessage.message_id;
+=> KHÔNG GIỚI HẠN SỐ LẦN LÊN GHIM CỦA MỖI NGƯỜI, MIỄN LÀ BẠN TRONG TOP 50 NGƯỜI NHANH NHẤT MỖI BÀI GHIM SẼ ĐƯỢC CHỌN`)
 
-      // Thiết lập hẹn giờ để xoá tin nhắn sau 30 phút (1800000 milliseconds)
-      setTimeout(() => {
-        bot.deleteMessage(groupId, messageId);
-      }, 1800000); // 30 phút
-    })
-    .catch((error) => {
-      console.error("Error sending message:", error);
-    });
+    console.log("ghimLink: " + ghimLinkFinal);
+    bot
+      .sendMessage(-1001957652310, ghimLinkFinal, {
+        disable_web_page_preview: true,
+      })
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err);
+        bot.sendMessage(-1001957652310, ghimLinkFinal, {
+          disable_web_page_preview: true,
+        });
+      });
+  }
 };
 
 const pointUpdateAlert = () => {
@@ -1861,7 +1884,7 @@ cron.schedule("*/1 * * * *", writeScoreFunc);
 cron.schedule("*/1 * * * *", write5linkFunc);
 cron.schedule("0 12 * * *", writeSnapshotFunc);
 cron.schedule("0 23 * * *", writeSnapshotClearFunc);
-// cron.schedule("30 6,9,12,15,18,21 * * *", adAlert);
+cron.schedule("*/1 * * * *", adAlert);
 // cron.schedule("50 6,9,12,15,18,21 * * *", pointUpdateAlert);
 // cron.schedule("*/18 7-23 * * *", writeReportFunc);
 // cron.schedule("*/10 7-23 * * *", done5Alert);
