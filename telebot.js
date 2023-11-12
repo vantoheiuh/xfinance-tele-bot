@@ -69,6 +69,14 @@ bot.on("message", async (msg) => {
   console.log(msg);
 
   let crAccount = rankScore.find((item) => item.id == msg.from.id);
+
+  if(!crAccount){
+    rankScore.push({
+      username: msg.from.username ?? uuidv4(),
+      score: 1,
+      id: msg.from.id,
+    });
+  }
   if (crAccount && crAccount.banned) {
     bot.sendMessage(
       chatId,
@@ -864,6 +872,21 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
         }
       }
     } else if ((msg.text.toLowerCase().indexOf("done25") !== -1 || msg.text.toLowerCase().indexOf("done 25") !== -1) && msg.text.indexOf("/status") !== -1 && containsLink(msg.text)) {
+      if (!currentAccount.twitter) {
+        bot.sendMessage(
+          chatId,
+          `Không tìm thấy twitter của bạn ${currentAccount.firstName} ${
+            currentAccount.lastName ? currentAccount.lastName : ""
+          }, vui lòng gõ /settwitter <your_twitter_url> để hệ thống lưu vào phục vụ việc cộng điểm rank!
+  Ví dụ: /settwitter https://twitter.com/xfinancevn_news
+          `,
+          {
+            disable_web_page_preview: true,
+            reply_to_message_id: msg.message_id,
+          }
+        );
+      }
+      
       if (done25Object.waitingList.map(item => item.id).indexOf(currentAccount.id) !== -1) {
         
         bot.sendMessage(
@@ -897,7 +920,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
       }
 
 
-      if (!currentAccount.twitter) {
+      if (false) {
         bot.sendMessage(
           chatId,
           `Không tìm thấy twitter của bạn ${currentAccount.firstName} ${
