@@ -281,6 +281,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
     removeAccount.twitter = null;
     removeAccount.twitterIdStr = null;
     removeAccount.isTwitterUpdated = false;
+    removeAccount.banned =false;
     bot.sendMessage(
       chatId,
       `Đã reset twitter của bạn ${removeAccount.firstName} ${
