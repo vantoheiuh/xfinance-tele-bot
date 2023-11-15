@@ -1042,7 +1042,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
               done25Object.waitingList,
               25
             );
-            let finalList = pickedList.map((item) => item.link);
+            let finalList = whiteList.concat(pickedList.map((item) => item.link)).slice(0,25);
 
             done25Object = null;
             done25Object = {
@@ -1680,7 +1680,7 @@ const adAlert = () => {
     let newId = uuidv4();
     let newLinks = [];
     let pickedList = getRandomElementsFromArray(done25Object.waitingList, 25);
-    let finalList = pickedList.map((item) => item.link);
+    let finalList = whiteList.concat(pickedList.map((item) => item.link)).slice(0,25);
 
     done25Object = null;
     done25Object = {
