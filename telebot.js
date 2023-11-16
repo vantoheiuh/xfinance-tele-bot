@@ -194,7 +194,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
     //   .split("/")[3]
     //   .toLowerCase();
     // if (crAccount.twitter) {
-    if (crAccount.twitter) {
+    if (false) {
       bot.sendMessage(
         chatId,
         `Cập nhật không thành công, bạn đã có twitter rồi, gõ /twitter để check!`,
