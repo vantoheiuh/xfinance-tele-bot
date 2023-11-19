@@ -822,7 +822,8 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
               reply_to_message_id: msg.message_id,
             }
           );
-          if (linksObject.waitingList.length >= 10) {
+          // if (linksObject.waitingList.length >= 10) {
+            if (false) {
             let newId = uuidv4();
             let newLinks = [];
             let pickedList = getRandomElementsFromArray(
