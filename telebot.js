@@ -503,10 +503,11 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
   }
 
   // DONE CAC LOAI
+  //&& msg.reply_to_message.forward_from_message_id >= 1661
   if (
     msg.text.toLowerCase().indexOf("done2fl") !== -1 ||
     ((msg.text.toLowerCase().indexOf("done25") !== -1 || msg.text.toLowerCase().indexOf("done 25") !== -1) &&
-      containsLink(msg.reply_to_message.text)) && msg.reply_to_message.forward_from_message_id >= 1661 ||
+      containsLink(msg.reply_to_message.text)) ||
     (msg.text.toLowerCase().indexOf("done2gr") !== -1 &&
       containsLink(msg.reply_to_message.text)) ||
     (msg.text.toLowerCase().indexOf("done1follow") !== -1 &&
@@ -905,8 +906,8 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
         return;
       }
       let currentId = msg.reply_to_message.text.toLowerCase().split("MSG-ID: ")[1] ? msg.reply_to_message.text.toLowerCase().split("MSG-ID: ")[1]: done25Object.id;
-
-      if(currentAccount.done25List.indexOf(currentId) !== -1){
+      console.log("currentId: " + currentId)
+      if(currentAccount.done25List.indexOf(currentId) !== -1 || currentAccount.doneList.indexOf(msg.reply_to_message.message_id) !== -1){
         bot.sendMessage(
           chatId,
           `Bạn ${currentAccount.firstName} ${
@@ -993,6 +994,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
         // );
         if(varCount >= 20 || varCount/extractUrls(msg.reply_to_message.text).length >= 0.8){
           currentAccount.done25List.push(currentId);
+          currentAccount.doneList.push(msg.reply_to_message.message_id);
           bot.sendMessage(
             chatId,
             `Kết quả check var của bạn ${msg.from.first_name} ${
@@ -1873,7 +1875,7 @@ const checkVar = (urls, username, twitterIdStr) => {
     const result = require("child_process")
       .execSync(
         `python3 scrape.py ${twitterIdStr} ${username} ${path} ${
-          urls.length === 5 ? 20 : 120
+          urls.length === 5 ? 20 : 50
         }`
       )
       .toString();
