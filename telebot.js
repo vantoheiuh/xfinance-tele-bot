@@ -1036,7 +1036,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
             });
           }
 
-          if (done25Object.waitingList.length >= 40 && Date.now() - done25Object.time >= 3600000) {
+          if (done25Object.waitingList.length >= 50 && Date.now() - done25Object.time >= 3600000) {
             let newId = uuidv4();
             let newLinks = [];
             if (pushList.length > 0) {
@@ -1147,8 +1147,9 @@ MSG-ID: ${newId}`)
 
   //check 5 link ver2
   if (
-    msg.text.toLowerCase() === "/link" ||
-    msg.text.toLowerCase().split("@")[0] === "/link"
+    // msg.text.toLowerCase() === "/link" ||
+    // msg.text.toLowerCase().split("@")[0] === "/link"
+    false
   ) {
     // check 5 link moi nhat chua done theo id
     // if (crAccount.done5List.indexOf(linksObject.id) !== -1) {
