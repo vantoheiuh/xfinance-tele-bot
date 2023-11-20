@@ -1039,6 +1039,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
           if (done25Object.waitingList.length >= 50 && Date.now() - done25Object.time >= 3600000) {
             let newId = uuidv4();
             let newLinks = [];
+            let pushListMessage = "";
             if (pushList.length > 0) {
               pushListMessage = `👉 Slot link của ban admin X FINANCE:
           ${pushList
