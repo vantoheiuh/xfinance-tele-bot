@@ -1036,9 +1036,16 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
             });
           }
 
-          if (done25Object.waitingList.length >= 50 && Date.now() - done25Object.time >= 3600000) {
+          if (done25Object.waitingList.length >= 40 && Date.now() - done25Object.time >= 3600000) {
             let newId = uuidv4();
             let newLinks = [];
+            if (pushList.length > 0) {
+              pushListMessage = `👉 Slot link của ban admin X FINANCE:
+          ${pushList
+                  .map((item, index) => index + 1 + ". " + item.split("/photo")[0])
+                  .join("\n")}`;
+                  pushList.length = 0
+            }
             let pickedList = getRandomElementsFromArray(
               done25Object.waitingList,
               25
@@ -1055,7 +1062,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
 
             let ghimLinkFinal =
               `THỜI GIAN CẬP NHẬT: ${currentHour}H ${new Date().toLocaleDateString()}.\n
-ĐÂY LÀ 25 LINK MỚI NHẤT ĐỂ TƯƠNG TÁC, TƯƠNG TÁC XONG REPLY "DONE25 + LINK CẦN SEEDING", 50 BẠN DONE25 SỚM NHẤT SẼ ĐƯỢC CHỌN NGẪU NHIÊN ĐỂ LẤY 25 LINK TIẾP THEO\n` +
+ĐÂY LÀ 25 LINK MỚI NHẤT ĐỂ TƯƠNG TÁC, TƯƠNG TÁC XONG REPLY "DONE25 + LINK CẦN SEEDING", 50 BẠN DONE25 SỚM NHẤT SẼ ĐƯỢC CHỌN NGẪU NHIÊN ĐỂ LẤY 25 LINK TIẾP THEO\n` + pushListMessage + "\n" +
               finalList
                 .map(
                   (item, index) => index + 1 + ". " + item.split("/photo")[0]
@@ -1240,42 +1247,42 @@ Giờ vàng: từ 19h tối tới 7h sáng hàng ngày
   }
 
   //CHECK RANK
-  if (
-    msg.text.toLowerCase() === "/rank" ||
-    msg.text.toLowerCase().split("@")[0] === "/rank"
-  ) {
-    let sortedRankScore = rankScore.sort((a, b) => b.score - a.score);
-    let currentAccountIndex = sortedRankScore.findIndex(
-      (item) => item.id == msg.from.id
-    );
+  // if (
+  //   msg.text.toLowerCase() === "/rank" ||
+  //   msg.text.toLowerCase().split("@")[0] === "/rank"
+  // ) {
+  //   let sortedRankScore = rankScore.sort((a, b) => b.score - a.score);
+  //   let currentAccountIndex = sortedRankScore.findIndex(
+  //     (item) => item.id == msg.from.id
+  //   );
 
-    if (currentAccountIndex !== -1) {
-      currentAccountIndex++;
-      bot.sendMessage(
-        -1001851061739,
-        `Thứ hạng hiện tại của bạn ${msg.from.first_name ?? ""} ${
-          msg.from.last_name ?? ""
-        } là: ${currentAccountIndex}/${
-          sortedRankScore.length
-        }\nNgoài ra, bạn có thể click vào đây /link để làm nhiệm vụ 5 link cải thiện rank.`,
-        { reply_to_message_id: msg.message_id }
-      );
-    } else {
-      rankScore.push({
-        username: msg.from.username ?? uuidv4(),
-        score: 1,
-        id: msg.from.id,
-      });
+  //   if (currentAccountIndex !== -1) {
+  //     currentAccountIndex++;
+  //     bot.sendMessage(
+  //       -1001851061739,
+  //       `Thứ hạng hiện tại của bạn ${msg.from.first_name ?? ""} ${
+  //         msg.from.last_name ?? ""
+  //       } là: ${currentAccountIndex}/${
+  //         sortedRankScore.length
+  //       }\nNgoài ra, bạn có thể click vào đây /link để làm nhiệm vụ 5 link cải thiện rank.`,
+  //       { reply_to_message_id: msg.message_id }
+  //     );
+  //   } else {
+  //     rankScore.push({
+  //       username: msg.from.username ?? uuidv4(),
+  //       score: 1,
+  //       id: msg.from.id,
+  //     });
 
-      bot.sendMessage(
-        -1001851061739,
-        `Thứ hạng hiện tại của bạn ${msg.from.first_name ?? ""} ${
-          msg.from.last_name ?? ""
-        } là: ${sortedRankScore.length}/${sortedRankScore.length}`,
-        { reply_to_message_id: msg.message_id }
-      );
-    }
-  }
+  //     bot.sendMessage(
+  //       -1001851061739,
+  //       `Thứ hạng hiện tại của bạn ${msg.from.first_name ?? ""} ${
+  //         msg.from.last_name ?? ""
+  //       } là: ${sortedRankScore.length}/${sortedRankScore.length}`,
+  //       { reply_to_message_id: msg.message_id }
+  //     );
+  //   }
+  // }
 
   //BOT COMMAND
 
@@ -1681,6 +1688,14 @@ const adAlert = () => {
   if (Date.now() - done25Object.time >= 10800000) {
     let newId = uuidv4();
     let newLinks = [];
+    let pushListMessage = "";
+    if (pushList.length > 0) {
+      pushListMessage = `👉 Slot link của ban admin X FINANCE:
+${pushList
+          .map((item, index) => index + 1 + ". " + item.split("/photo")[0])
+          .join("\n")}`;
+          pushList.length = 0
+    }
     let pickedList = getRandomElementsFromArray(done25Object.waitingList, 25);
     let finalList = whiteList.concat(pickedList.map((item) => item.link)).slice(0,25);
     whiteList.length = 0;
@@ -1694,7 +1709,7 @@ const adAlert = () => {
 
     let ghimLinkFinal =
       `THỜI GIAN CẬP NHẬT: ${currentHour}H${currentMin}P ${new Date().toLocaleDateString()}.\n
-ĐÂY LÀ 25 LINK MỚI NHẤT ĐỂ TƯƠNG TÁC, TƯƠNG TÁC XONG REPLY "DONE25 + LINK CẦN SEEDING", 50 BẠN DONE25 SỚM NHẤT SẼ ĐƯỢC CHỌN NGẪU NHIÊN ĐỂ LẤY 25 LINK TIẾP THEO\n` +
+ĐÂY LÀ 25 LINK MỚI NHẤT ĐỂ TƯƠNG TÁC, TƯƠNG TÁC XONG REPLY "DONE25 + LINK CẦN SEEDING", 50 BẠN DONE25 SỚM NHẤT SẼ ĐƯỢC CHỌN NGẪU NHIÊN ĐỂ LẤY 25 LINK TIẾP THEO\n`+ pushListMessage +"\n" +
       finalList
         .map((item, index) => index + 1 + ". " + item.split("/photo")[0])
         .join("\n").concat(`\n\n
