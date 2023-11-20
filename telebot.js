@@ -506,7 +506,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
   if (
     msg.text.toLowerCase().indexOf("done2fl") !== -1 ||
     ((msg.text.toLowerCase().indexOf("done25") !== -1 || msg.text.toLowerCase().indexOf("done 25") !== -1) &&
-      containsLink(msg.reply_to_message.text)) && msg.forward_from_message_id >= 1661 ||
+      containsLink(msg.reply_to_message.text)) && msg.reply_to_message.forward_from_message_id >= 1661 ||
     (msg.text.toLowerCase().indexOf("done2gr") !== -1 &&
       containsLink(msg.reply_to_message.text)) ||
     (msg.text.toLowerCase().indexOf("done1follow") !== -1 &&
