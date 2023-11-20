@@ -904,7 +904,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
         );
         return;
       }
-      let currentId = msg.text.toLowerCase().split("MSG-ID: ")[1] ? msg.text.toLowerCase().split("MSG-ID: ")[1]:  done25Object.id;
+      let currentId = msg.reply_to_message.text.toLowerCase().split("MSG-ID: ")[1] ? msg.reply_to_message.text.toLowerCase().split("MSG-ID: ")[1]: done25Object.id;
 
       if(currentAccount.done25List.indexOf(currentId) !== -1){
         bot.sendMessage(
