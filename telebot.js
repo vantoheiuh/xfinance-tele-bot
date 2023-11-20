@@ -505,7 +505,7 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
   // DONE CAC LOAI
   if (
     msg.text.toLowerCase().indexOf("done2fl") !== -1 ||
-    (msg.text.toLowerCase().indexOf("done25") !== -1 &&
+    ((msg.text.toLowerCase().indexOf("done25") !== -1 || msg.text.toLowerCase().indexOf("done 25") !== -1) &&
       containsLink(msg.reply_to_message.text)) ||
     (msg.text.toLowerCase().indexOf("done2gr") !== -1 &&
       containsLink(msg.reply_to_message.text)) ||
@@ -822,8 +822,8 @@ Ví dụ: /settwitter https://twitter.com/xfinancevn_news
               reply_to_message_id: msg.message_id,
             }
           );
-          // if (linksObject.waitingList.length >= 10) {
-            if (false) {
+          if (linksObject.waitingList.length >= 10) {
+            // if (false) {
             let newId = uuidv4();
             let newLinks = [];
             let pickedList = getRandomElementsFromArray(
@@ -1147,9 +1147,9 @@ MSG-ID: ${newId}`)
 
   //check 5 link ver2
   if (
-    // msg.text.toLowerCase() === "/link" ||
-    // msg.text.toLowerCase().split("@")[0] === "/link"
-    false
+    msg.text.toLowerCase() === "/link" ||
+    msg.text.toLowerCase().split("@")[0] === "/link"
+    // false
   ) {
     // check 5 link moi nhat chua done theo id
     // if (crAccount.done5List.indexOf(linksObject.id) !== -1) {
