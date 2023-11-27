@@ -889,9 +889,12 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
           }
         );
       }
+
+      let currentUsernameList = done25Object.waitingList.map(item => item.link.split("?")[0].split("/")[3].toLowerCase());
+      let currentName = extractUrls(msg.text.toLowerCase())[0].split("?")[0].split("/")[3].toLowerCase();
+
       
-      if (done25Object.waitingList.map(item => item.id).indexOf(currentAccount.id) !== -1) {
-        
+      if (done25Object.waitingList.map(item => item.id).indexOf(currentAccount.id) !== -1 || currentUsernameList.indexOf(currentName) !== -1) {
         bot.sendMessage(
           chatId,
           `Bạn ${currentAccount.firstName} ${
@@ -1638,8 +1641,8 @@ function extractUrls(text) {
 // Lên lịch cho các thời điểm cụ thể trong ngày
 
 const writeScoreFunc = () => {
-  let newRankScore = markDuplicatesAsBanned(rankScore);
-  rankScore = JSON.parse(JSON.stringify(newRankScore));
+  // let newRankScore = markDuplicatesAsBanned(rankScore);
+  // rankScore = JSON.parse(JSON.stringify(newRankScore));
   fs.writeFileSync("./score.json", JSON.stringify(rankScore));
   fs.writeFileSync("./linksObject.json", JSON.stringify(linksObject));
   fs.writeFileSync("./done25Object.json", JSON.stringify(done25Object));
