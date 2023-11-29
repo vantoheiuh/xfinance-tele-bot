@@ -13,9 +13,8 @@ let BLL = [
   "small_xfinance",
   "lecter_xfinance",
   "vader_xfinance",
-  "zayc_xfinance",
-  "Thane_XFinance",
-  "Rita_XFinance",
+  "thane_xfinance",
+  "rita_xfinance",
 ]
 
 let groupId = -1001957652310; // channelId
@@ -1066,7 +1065,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
                   pushList.length = 0
             }
             let pickedList = getRandomElementsFromArray(
-              done25Object.waitingList.filter(item => item.link.split("/")[3].toLowerCase()),
+              done25Object.waitingList.filter(item => BLL.indexOf(item.link.split("/")[3].toLowerCase()) == -1),
               25
             );
             let finalList = whiteList.concat(pickedList.map((item) => item.link)).slice(0,25);
@@ -1716,7 +1715,10 @@ ${pushList
           .join("\n")}`;
           pushList.length = 0
     }
-    let pickedList = getRandomElementsFromArray(done25Object.waitingList, 25);
+    let pickedList = getRandomElementsFromArray(
+      done25Object.waitingList.filter(item => BLL.indexOf(item.link.split("/")[3].toLowerCase()) == -1),
+      25
+    );
     let finalList = whiteList.concat(pickedList.map((item) => item.link)).slice(0,25);
     whiteList.length = 0;
 
