@@ -5,6 +5,19 @@ const { v4: uuidv4 } = require("uuid");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const fs = require("fs");
 
+let BLL = [
+  "felix_xfinance",
+  "musan_xfinance",
+  "kai_xfinance",
+  "doom_xfinance",
+  "small_xfinance",
+  "lecter_xfinance",
+  "vader_xfinance",
+  "zayc_xfinance",
+  "Thane_XFinance",
+  "Rita_XFinance",
+]
+
 let groupId = -1001957652310; // channelId
 
 let rankScore = require("./score.json");
@@ -1053,7 +1066,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
                   pushList.length = 0
             }
             let pickedList = getRandomElementsFromArray(
-              done25Object.waitingList,
+              done25Object.waitingList.filter(item => item.link.split("/")[3].toLowerCase()),
               25
             );
             let finalList = whiteList.concat(pickedList.map((item) => item.link)).slice(0,25);
