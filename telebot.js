@@ -1053,22 +1053,20 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
             });
           }
 
-          if (done25Object.waitingList.length >= 50 && Date.now() - done25Object.time >= 3600000) {
+          if (done25Object.waitingList.length >= 25) {
             let newId = uuidv4();
             let newLinks = [];
             let pushListMessage = "";
-            if (pushList.length > 0) {
+            if (pushList.length > 0 || whiteList.length > 0) {
               pushListMessage = `👉 Slot link của ban admin X FINANCE:
-          ${pushList
+          ${whiteList.concat(pushList)
                   .map((item, index) => index + 1 + ". " + item.split("/photo")[0])
                   .join("\n")}`;
                   pushList.length = 0
             }
-            let pickedList = getRandomElementsFromArray(
-              done25Object.waitingList.filter(item => BLL.indexOf(item.link.split("/")[3].toLowerCase()) == -1),
-              25
-            );
-            let finalList = whiteList.concat(pickedList.map((item) => item.link)).slice(0,25);
+            let pickedList = done25Object.waitingList.filter(item => BLL.indexOf(item.link.split("/")[3].toLowerCase()) == -1);
+
+            let finalList = pickedList.map((item) => item.link)
             whiteList.length = 0;
 
             done25Object = null;
@@ -1090,9 +1088,10 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
 Cơ chế ghim link mới:
 
 - reply "done25 + link" khi tương tác xong
-- 50 bạn hoàn thành 25 link này  nhanh nhất sẽ được vào HÀNG CHỜ NGẪU NHIÊN
-- 25 link này sẽ đổi NGAY LẬP TỨC khi đủ 50 bạn done25
--KHÔNG GIỚI HẠN SỐ LẦN LÊN GHIM CỦA MỖI NGƯỜI, MIỄN LÀ BẠN TRONG TOP 50 NGƯỜI NHANH NHẤT MỖI BÀI GHIM SẼ ĐƯỢC CHỌN
+- 25 link này sẽ đổi NGAY LẬP TỨC khi đủ 25 bạn done25
+- Không cần phải đua tốc độ tương tác, bạn cứ tương tác bài mới nhất tại thời điểm bạn tương tác, lúc nào xong vào reply done25 + link ở chính bài đó là được vào hàng chờ
+
+-KHÔNG GIỚI HẠN SỐ LẦN LÊN GHIM CỦA MỖI NGƯỜI / NGÀY
 
 MSG-ID: ${newId}`)
 
@@ -1969,7 +1968,7 @@ cron.schedule("*/1 * * * *", writeScoreFunc);
 cron.schedule("*/1 * * * *", write5linkFunc);
 cron.schedule("0 12 * * *", writeSnapshotFunc);
 cron.schedule("0 23 * * *", writeSnapshotClearFunc);
-cron.schedule("*/1 * * * *", adAlert);
+// cron.schedule("*/1 * * * *", adAlert);
 // cron.schedule("50 6,9,12,15,18,21 * * *", pointUpdateAlert);
 // cron.schedule("*/18 7-23 * * *", writeReportFunc);
 // cron.schedule("*/10 7-23 * * *", done5Alert);
