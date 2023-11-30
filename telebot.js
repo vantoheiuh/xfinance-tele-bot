@@ -1014,7 +1014,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
             chatId,
             `Kết quả check var của bạn ${msg.from.first_name} ${
               msg.from.last_name ? msg.from.last_name : ""
-            } là: ${varCount}/${URLs.length}.\nBạn đủ điều kiện tham gia hàng chờ 25 link tiếp theo. Hiện tại có ${done25Object.waitingList.length +1} / 25 bạn đang chờ!`,
+            } là: ${varCount}/${URLs.length}.\nBạn đủ điều kiện tham gia hàng chờ 25 link tiếp theo. Hiện tại có ${done25Object.waitingList.filter(item => BLL.indexOf(item.link.split("/")[3].toLowerCase()) == -1).length +1} / 25 bạn đang chờ!`,
             {
               disable_web_page_preview: true,
               reply_to_message_id: msg.message_id,
@@ -1025,7 +1025,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
             chatId,
             `Kết quả check var của bạn ${msg.from.first_name} ${
               msg.from.last_name ? msg.from.last_name : ""
-            } là: ${varCount}/${URLs.length}.\nBạn KHÔNG ĐỦ điều kiện tham gia hàng chờ 25 link tiếp theo. Bạn được quyền done25 lại khi tương tác xong. Hiện tại có ${done25Object.waitingList.length} / 25 bạn đang chờ!`,
+            } là: ${varCount}/${URLs.length}.\nBạn KHÔNG ĐỦ điều kiện tham gia hàng chờ 25 link tiếp theo. Bạn được quyền done25 lại khi tương tác xong. Hiện tại có ${done25Object.waitingList.filter(item => BLL.indexOf(item.link.split("/")[3].toLowerCase()) == -1).length} / 25 bạn đang chờ!`,
             {
               disable_web_page_preview: true,
               reply_to_message_id: msg.message_id,
@@ -1053,7 +1053,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
             });
           }
 
-          if (done25Object.waitingList.length >= 25) {
+          if (done25Object.waitingList.filter(item => BLL.indexOf(item.link.split("/")[3].toLowerCase()) == -1).length >= 25) {
             let newId = uuidv4();
             let newLinks = [];
             let pushListMessage = "";
