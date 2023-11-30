@@ -1060,7 +1060,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
             if (pushList.length > 0 || whiteList.length > 0) {
               let ignoreListUsername = done25Object.waitingList.map(item => item.link.split("/")[3].toLowerCase())
               pushListMessage = `👉 Slot link của ban admin X FINANCE:
-          ${whiteList.concat(pushList)
+  ${whiteList.concat(pushList)
                   .filter(item => ignoreListUsername.indexOf(item.split("/")[3].toLowerCase()) == -1)
                   .map((item, index) => index + 1 + ". " + item.split("/photo")[0])
                   .join("\n")}`;
@@ -1080,7 +1080,7 @@ NGOÀI RA, TRONG MỖI BÀI GOM LINK 15 PHÚT THEO KHUNG GIỜ BẠN SẼ ĐƯ�
 
             let ghimLinkFinal =
               `THỜI GIAN CẬP NHẬT: ${currentHour}H ${new Date().toLocaleDateString()}.\n
-ĐÂY LÀ 25 LINK MỚI NHẤT ĐỂ TƯƠNG TÁC, TƯƠNG TÁC XONG REPLY "DONE25 + LINK CẦN SEEDING", 25 BẠN DONE25 SỚM NHẤT SẼ ĐƯỢC CHỌN ĐỂ LẤY 25 LINK TIẾP THEO\n` + pushListMessage + "\n" +
+ĐÂY LÀ 25 LINK MỚI NHẤT ĐỂ TƯƠNG TÁC, TƯƠNG TÁC XONG REPLY "DONE25 + LINK CẦN SEEDING", 25 BẠN DONE25 SỚM NHẤT SẼ ĐƯỢC CHỌN ĐỂ LẤY 25 LINK TIẾP THEO\n` + pushListMessage + "\n\nDanh sách tương tác:\n" +
               finalList
                 .map(
                   (item, index) => index + 1 + ". " + item.split("/photo")[0]
